@@ -1,0 +1,14 @@
+@tailwind base;
+
+ol {
+  @apply list-decimal;
+  @apply list-inside;
+}
+
+ul {
+  @apply list-disc;
+  @apply list-inside;
+}
+
+@tailwind components;
+@tailwind utilities;
