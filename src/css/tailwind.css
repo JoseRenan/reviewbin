@@ -591,14 +591,201 @@ video {
   height: auto;
 }
 
-ol {
-  list-style-type: decimal;
-  list-style-position: inside;
+.py-05 {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
 }
 
-ul {
+.markdown {
+  --text-opacity: 1;
+  color: #1a202c;
+  color: rgba(26, 32, 44, var(--text-opacity));
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+.markdown > * + * {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.markdown li + li {
+  margin-top: 0.25rem;
+}
+
+.markdown li > p + p {
+  margin-top: 1.5rem;
+}
+
+.markdown strong {
+  font-weight: 600;
+}
+
+.markdown a {
+  --text-opacity: 1;
+  color: #3182ce;
+  color: rgba(49, 130, 206, var(--text-opacity));
+  font-weight: 600;
+}
+
+.markdown strong a {
+  font-weight: 700;
+}
+
+.markdown h1 {
+  line-height: 1.25;
+  border-bottom-width: 1px;
+  font-size: 2.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.markdown h2 {
+  line-height: 1.25;
+  border-bottom-width: 1px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.markdown h3 {
+  line-height: 1.375;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+}
+
+.markdown h4 {
+  line-height: 1;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+}
+
+.markdown h5 {
+  line-height: 1.25;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+}
+
+.markdown h6 {
+  line-height: 1.25;
+  font-size: 0.875rem;
+  font-weight: 600;
+  --text-opacity: 1;
+  color: #718096;
+  color: rgba(113, 128, 150, var(--text-opacity));
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+}
+
+.markdown blockquote {
+  font-size: 1rem;
+  border-left-width: 4px;
+  --border-opacity: 1;
+  border-color: #e2e8f0;
+  border-color: rgba(226, 232, 240, var(--border-opacity));
+  padding-left: 1rem;
+  padding-right: 1rem;
+  --text-opacity: 1;
+  color: #718096;
+  color: rgba(113, 128, 150, var(--text-opacity));
+}
+
+.markdown code {
+  font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.875rem;
+  display: inline;
+  --bg-opacity: 1;
+  background-color: #edf2f7;
+  background-color: rgba(237, 242, 247, var(--bg-opacity));
+  border-radius: 0.25rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+}
+
+.markdown pre {
+  --bg-opacity: 1;
+  background-color: #f7fafc;
+  background-color: rgba(247, 250, 252, var(--bg-opacity));
+  border-radius: 0.25rem;
+  padding: 1rem;
+}
+
+.markdown pre code {
+  display: block;
+  background-color: transparent;
+  padding: 0;
+  overflow: visible;
+  border-radius: 0;
+}
+
+.markdown ul {
+  font-size: 1rem;
+  padding-left: 2rem;
   list-style-type: disc;
-  list-style-position: inside;
+}
+
+.markdown ol {
+  font-size: 1rem;
+  padding-left: 2rem;
+  list-style-type: decimal;
+}
+
+.markdown kbd {
+  font-size: 0.75rem;
+  display: inline-block;
+  border-radius: 0.25rem;
+  border-width: 1px;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  vertical-align: middle;
+  font-weight: 400;
+  font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.markdown table {
+  font-size: 1rem;
+  --border-opacity: 1;
+  border-color: #718096;
+  border-color: rgba(113, 128, 150, var(--border-opacity));
+}
+
+.markdown th {
+  border-width: 1px;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.markdown td {
+  border-width: 1px;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+/* Override pygments style background color. */
+
+.markdown .highlight pre {
+  --bg-opacity: 1 !important;
+  background-color: #f7fafc !important;
+  background-color: rgba(247, 250, 252, var(--bg-opacity)) !important;
 }
 
 .container {
