@@ -12,9 +12,13 @@ import {
 } from '@primer/components'
 import SelectLanguage from '../components/select-language'
 import CodeEditor from '../components/code-editor'
-import { useState } from 'react'
+import { FormEvent, SyntheticEvent, useState } from 'react'
 import HeaderButton from '../components/header-button'
 import CheckboxLabel from '../components/checkbox-label'
+import {
+  Language,
+  LANGUAGES,
+} from '../components/select-language/SelectLanguage'
 
 const Navbar = () => (
   <Header px={5}>
@@ -30,8 +34,66 @@ const Navbar = () => (
   </Header>
 )
 
+const CreateBinForm = () => {
+  const [lang, setLang] = useState<Language>(LANGUAGES.text)
+  const [code, setCode] = useState('// Cole seu código aqui')
+  const [anonymousReview, setAnonymousReview] = useState(true)
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    fetch('/api/bins', {
+      method: 'POST',
+      body: JSON.stringify({
+        anonymousReview,
+        author: 'anonymous',
+        files: [
+          { lang, code, filename: 'main' },
+        ],
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <Flex>
+        <TextInput width={300} mr={2} placeholder="Nome do bin" />
+        <SelectLanguage
+          value={lang.displayName}
+          onChange={(lang) => setLang(lang)}
+        />
+      </Flex>
+      <BorderBox my={3}>
+        <CodeEditor
+          mode={lang.name}
+          style={{ borderRadius: 6 }}
+          value={code}
+          onChange={(newCode) => setCode(newCode)}
+        />
+      </BorderBox>
+      <Flex justifyContent="space-between">
+        <Tooltip aria-label="Você precisa se cadastrar para desabilitar essa opção">
+          <CheckboxLabel
+            label="Permitir revisão por usuários não cadastrados"
+            htmlFor="not-registered-users">
+            <input
+              id="not-registered-users"
+              type="checkbox"
+              checked={anonymousReview}
+              onChange={(e) => setAnonymousReview(e.target.checked)}
+              disabled
+            />
+          </CheckboxLabel>
+        </Tooltip>
+        <ButtonPrimary type="submit">Criar bin</ButtonPrimary>
+      </Flex>
+    </form>
+  )
+}
+
 const Home = () => {
-  const [mode, setMode] = useState({ name: 'text' })
   return (
     <div>
       <Head>
@@ -43,31 +105,7 @@ const Home = () => {
         <Heading fontSize={4} mb={3}>
           Crie um novo bin
         </Heading>
-        <Flex>
-          <TextInput width={300} mr={2} placeholder="Nome do bin" />
-          <SelectLanguage
-            value={mode.name}
-            onChange={(lang) => setMode(lang)}
-          />
-        </Flex>
-        <BorderBox my={3}>
-          <CodeEditor mode={mode.name} style={{ borderRadius: 6 }} />
-        </BorderBox>
-        <Flex justifyContent="space-between">
-          <Tooltip aria-label="Você precisa se cadastrar para desabilitar essa opção">
-            <CheckboxLabel
-              label="Permitir revisão por usuários não cadastrados"
-              htmlFor="not-registered-users">
-              <input
-                id="not-registered-users"
-                type="checkbox"
-                checked
-                disabled
-              />
-            </CheckboxLabel>
-          </Tooltip>
-          <ButtonPrimary>Criar bin</ButtonPrimary>
-        </Flex>
+        <CreateBinForm />
       </Box>
     </div>
   )

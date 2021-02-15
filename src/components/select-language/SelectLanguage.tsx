@@ -1,38 +1,59 @@
-import { Button, SelectMenu, Text } from '@primer/components'
+import { Button, SelectMenu, Text, TextInput } from '@primer/components'
 import { TriangleDownIcon } from '@primer/octicons-react'
 import { useState } from 'react'
 
-const LANGUAGES = [
-  {
+export interface Language {
+  displayName: string
+  name: string
+  fileExtension: string
+}
+
+export const LANGUAGES = {
+  text: {
+    name: 'text',
+    displayName: 'Nenhuma',
+    fileExtension: 'txt',
+  },
+  javascript: {
     name: 'javascript',
+    displayName: 'Javascript',
+    fileExtension: 'js',
   },
-  {
+  java: {
     name: 'java',
+    displayName: 'Java',
+    fileExtension: 'java',
   },
-  {
-    name: 'C++',
-  },
-  {
+  python: {
     name: 'python',
+    displayName: 'Python',
+    fileExtension: 'py',
   },
-  {
-    name: 'pascal',
+  c_cpp: {
+    name: 'c_cpp',
+    displayName: 'C++',
+    fileExtension: 'cpp',
   },
-]
+  jsx: {
+    name: 'jsx',
+    displayName: 'React Javascript',
+    fileExtension: 'jsx',
+  },
+}
 
 interface SelectLangProps {
   value: string
-  onChange: (language: { name: string }) => void
+  onChange: (language: Language) => void
 }
 
 const SelectLanguage = ({ value, onChange }: SelectLangProps) => {
   const [filterValue, setFilterValue] = useState('')
 
-  let languages = LANGUAGES
+  let languages = Object.values(LANGUAGES)
 
   if (filterValue !== '') {
     languages = languages.filter((lang) =>
-      lang.name.toLowerCase().includes(filterValue.toLowerCase())
+      lang.displayName.toLowerCase().includes(filterValue.toLowerCase())
     )
   }
 
@@ -44,7 +65,8 @@ const SelectLanguage = ({ value, onChange }: SelectLangProps) => {
       </Button>
       <SelectMenu.Modal>
         <SelectMenu.Header>Linguagens</SelectMenu.Header>
-        <SelectMenu.Filter
+        <TextInput
+          m={2}
           placeholder="Filtrar linguagens..."
           value={filterValue}
           onChange={(value) => setFilterValue(value.target.value)}
@@ -54,7 +76,7 @@ const SelectLanguage = ({ value, onChange }: SelectLangProps) => {
           <SelectMenu.List>
             {languages.map((lang) => (
               <SelectMenu.Item key={lang.name} onClick={() => onChange(lang)}>
-                {lang.name}
+                {lang.displayName}
               </SelectMenu.Item>
             ))}
           </SelectMenu.List>
