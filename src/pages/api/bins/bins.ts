@@ -1,4 +1,4 @@
-import { bucket, db } from './firebase'
+import { bucket, db } from '../firebaseAdmin'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export const binsRef = db.collection('bins')
@@ -26,21 +26,21 @@ const uploadBinToStorage = (content: string, name: string, mimetype: string) =>
     blobStream.end(content)
   })
 
-const createBin = async (req: NextApiRequest, res: NextApiResponse) => {
+export const createBin = async (req: NextApiRequest, res: NextApiResponse) => {
   const { body } = req
   const ref = binsRef.doc()
 
-  const filename = `bins/${ref.id}/${body.files[0].filename}.${body.files[0].lang.fileExtension}`
+  const filename = `${body.files[0].filename}.${body.files[0].lang.fileExtension}`
   const fileUrl = await uploadBinToStorage(
     body.files[0].code,
-    filename,
+    `bins/${ref.id}/${filename}`,
     'text/plain'
   ).catch((e) => console.log(e))
 
   const bin = {
     id: ref.id,
     author: body.author,
-    files: [{ name: filename, url: fileUrl }],
+    files: [{ name: filename, url: fileUrl, lang: body.files[0].lang }],
   }
 
   await ref.set(bin).catch((e) => console.error(e))
@@ -48,13 +48,14 @@ const createBin = async (req: NextApiRequest, res: NextApiResponse) => {
   res.status(200).json(bin)
 }
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  switch (req.method) {
-    case 'POST':
-      await createBin(req, res)
-      break
-    default:
-      res.setHeader('Allow', ['POST'])
-      res.status(405).end(`Method ${req.method} Not Allowed`)
+export const getBin = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { query } = req
+  const bin = await binsRef.doc(query.id as string).get()
+  if (!bin.exists) {
+    res.status(404).json({
+      message: "This bin doesn't exists",
+    })
+  } else {
+    res.status(200).json(bin.data())
   }
 }
