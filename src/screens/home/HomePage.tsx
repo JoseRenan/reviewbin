@@ -10,16 +10,16 @@ import {
   TextInput,
   Tooltip,
 } from '@primer/components'
-import SelectLanguage from '../components/select-language'
-import CodeEditor from '../components/code-editor'
+import SelectLanguage from '../../components/select-language'
+import CodeEditor from '../../components/code-editor'
 import { FormEvent, useState } from 'react'
-import HeaderButton from '../components/header-button'
-import CheckboxLabel from '../components/checkbox-label'
+import HeaderButton from '../../components/header-button'
+import CheckboxLabel from '../../components/checkbox-label'
 import {
   Language,
   LANGUAGES,
-} from '../components/select-language/SelectLanguage'
-import { Bin } from './bins/BinPage'
+} from '../../components/select-language/SelectLanguage'
+import { Bin } from '../bins/BinPage'
 import { useRouter } from 'next/dist/client/router'
 
 const Navbar = () => (

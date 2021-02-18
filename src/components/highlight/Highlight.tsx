@@ -1,42 +1,123 @@
-import SyntaxHighlighter from 'react-syntax-highlighter'
-import createElement from 'react-syntax-highlighter/dist/cjs/create-element'
-import github from 'react-syntax-highlighter/dist/cjs/styles/hljs/github-gist'
-import { PropsWithChildren, ReactNode } from 'react'
+import { PropsWithChildren } from 'react'
+import { CSSProperties } from 'styled-components'
 
-export type LineWrapperProps = PropsWithChildren<{ line: number; row: any }>
+export type LineWrapperProps = PropsWithChildren<{
+  lineNumber: number
+  key: string
+}>
 
-export interface HighlighterProps {
+const highlighter = ({
+  codeMirror,
+  value,
+  language,
+  lineWrapper = ({ children }) => <>{children}</>,
+  prefix = 'cm-',
+}: {
+  codeMirror: any
+  value: string
   language: string
-  lineWrapper?: ({ children, line }: LineWrapperProps) => JSX.Element
+  lineWrapper?: ({ children, lineNumber }: LineWrapperProps) => JSX.Element
+  prefix?: string
+}) => {
+  const elements: any[] = []
+  let line: any[] = []
+  let lineNumber = 0
+  let index = 0
+  let lastStyle: string | null = null
+  let tokenBuf = ''
+
+  const pushToken = (token: string, style: string | null) => {
+    line.push(
+      <span className={style ? prefix + style : ''} key={`token--${++index}`}>
+        {token}
+      </span>
+    )
+  }
+
+  const pushLine = () => {
+    elements.push(
+      lineWrapper({
+        lineNumber: ++lineNumber,
+        children: line,
+        key: `line--${index}`,
+      })
+    )
+    line = []
+  }
+
+  const mode = codeMirror.findModeByName(language)
+  codeMirror.runMode(
+    value,
+    mode ? mode.mime : language,
+    (token: string, style: string | null) => {
+      if (token === '\n') {
+        tokenBuf += token
+        pushToken(tokenBuf, lastStyle)
+        pushLine()
+        tokenBuf = ''
+      } else if (lastStyle === style) {
+        tokenBuf += token
+        lastStyle = style
+      } else {
+        if (tokenBuf) {
+          pushToken(tokenBuf, lastStyle)
+        }
+        tokenBuf = token
+        lastStyle = style
+      }
+    }
+  )
+
+  pushToken(tokenBuf, lastStyle)
+  pushLine()
+
+  return elements
 }
 
 export const Highlight = ({
+  code,
   language,
-  lineWrapper = ({ children }) => <>{children}</>,
-  children,
-}: PropsWithChildren<HighlighterProps>) => {
+  lineWrapper,
+  codeWrapper = ({ children }) => <>{children}</>,
+  style,
+}: {
+  code: string
+  language: string
+  lineWrapper?: ({ children, lineNumber }: LineWrapperProps) => JSX.Element
+  codeWrapper?: ({ children }: PropsWithChildren<{}>) => JSX.Element
+  style?: CSSProperties
+}) => {
+  const prefix = 'cm-'
+
+  let CodeMirror = null
+  if (
+    typeof window !== 'undefined' &&
+    typeof window.navigator !== 'undefined'
+  ) {
+    CodeMirror = require('codemirror')
+    require('codemirror/addon/runmode/runmode')
+    require('codemirror/mode/meta')
+    require('codemirror/mode/jsx/jsx')
+    require('codemirror/mode/python/python')
+    require('codemirror/mode/clike/clike')
+    require('codemirror/mode/javascript/javascript')
+    // TODO find a better way to import those languages
+  }
+
   return (
-    <SyntaxHighlighter
-      customStyle={{ margin: 0, padding: 0 }}
-      language={language}
-      style={github}
-      renderer={({ rows, stylesheet, useInlineStyles }: any) => (
-        <>
-          {rows.map((row: any, index: any) =>
-            lineWrapper({
-              line: index + 1,
-              row,
-              children: createElement({
-                node: row,
-                stylesheet,
-                useInlineStyles,
-                key: index,
-              }),
-            })
-          )}
-        </>
-      )}>
-      {children}
-    </SyntaxHighlighter>
+    <>
+      {CodeMirror && (
+        <pre style={style} className={`${prefix}s-solarized`}>
+          {codeWrapper({
+            children: highlighter({
+              codeMirror: CodeMirror,
+              value: code,
+              language,
+              lineWrapper,
+            }),
+          })}
+        </pre>
+      )}
+    </>
   )
 }

@@ -14,7 +14,7 @@ const getBinFromStorage = async (url: string) => {
 
 export interface BinFile {
   lang: Language
-  filename: string
+  name: string
   url: string
 }
 
@@ -47,7 +47,9 @@ export const BinPage = () => {
         <title>ReviewBin</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {bin && <CodeViewer code={content ?? ''} file={bin.files[0]} />}
+      {bin && content && (
+        <CodeViewer code={content ?? ''} file={bin.files[0]} />
+      )}
     </>
   )
 }
