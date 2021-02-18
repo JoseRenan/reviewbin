@@ -24,10 +24,11 @@ export const CodeLineWrapper = ({
   }
   return (
     <>
-      <tr style={{ width: '100%' }}>
+      <tr
+        onMouseEnter={() => hover(true)}
+        onMouseLeave={() => hover(false)}
+        style={{ width: '100%' }}>
         <td
-          onMouseEnter={() => hover(true)}
-          onMouseLeave={() => hover(false)}
           style={{
             paddingRight: 20,
             paddingLeft: 10,
