@@ -1,27 +1,91 @@
-import { BorderBox, Text, Flex, StyledOcticon } from '@primer/components'
-import { FileIcon } from '@primer/octicons-react'
+import { Box, BorderBox, Text, Flex, StyledOcticon } from '@primer/components'
+import { FileIcon, PlusIcon } from '@primer/octicons-react'
+import { useState } from 'react'
 import { BinFile } from '../../screens/bins/BinPage'
 import Highlight from '../highlight'
 import { LineWrapperProps } from '../highlight/Highlight'
 
-const CodeLine = ({ children, lineNumber }: LineWrapperProps) => (
-  <tr style={{ height: 20 }}>
-    <td
-      style={{
-        textAlign: 'right',
-        paddingRight: 20,
-        paddingLeft: 10,
-        userSelect: 'none',
-      }}>
-      <Text fontFamily="monospace" color="gray.4">
-        {lineNumber}
-      </Text>
-    </td>
-    <td style={{ userSelect: 'text' }}>{children}</td>
-  </tr>
-)
+export interface CommentAreaProps {
+  lineNumber: number
+  codeLine: JSX.Element[]
+}
 
-export const CodeViewer = ({ code, file }: { code: string; file: BinFile }) => {
+export const CodeLineWrapper = ({
+  children,
+  lineNumber,
+  codeLine,
+  onPlusClick,
+}: LineWrapperProps & {
+  onPlusClick?: (lineNumber: number) => void
+}) => {
+  const [showButton, setShowButton] = useState(false)
+  const hover = (isHovered: boolean) => {
+    setShowButton(isHovered)
+  }
+  return (
+    <>
+      <tr style={{ width: '100%' }}>
+        <td
+          onMouseEnter={() => hover(true)}
+          onMouseLeave={() => hover(false)}
+          style={{
+            paddingRight: 20,
+            paddingLeft: 10,
+            userSelect: 'none',
+          }}>
+          <Flex sx={{ position: 'relative', textAlign: 'right' }}>
+            <Text
+              as={Box}
+              textAlign="right"
+              fontFamily="monospace"
+              color="gray.4"
+              lineHeight="18px"
+              sx={{ width: '100%' }}>
+              {lineNumber}
+            </Text>
+            {onPlusClick && (
+              <Box
+                role="button"
+                onClick={() => onPlusClick(lineNumber)}
+                width="20px"
+                height="20px"
+                aria-hidden={!showButton}
+                hidden={!showButton}
+                sx={{
+                  position: 'absolute',
+                  right: '-22px',
+                  backgroundColor: 'blue.5',
+                  textAlign: 'center',
+                  borderRadius: 2,
+                }}>
+                <StyledOcticon
+                  verticalAlign="middle"
+                  size={14}
+                  color="white"
+                  icon={PlusIcon}
+                />
+              </Box>
+            )}
+          </Flex>
+        </td>
+        <td style={{ width: '100%' }}>{codeLine}</td>
+      </tr>
+      <tr>
+        <td colSpan={2}>{children}</td>
+      </tr>
+    </>
+  )
+}
+
+export const CodeViewer = ({
+  code,
+  file,
+  lineWrapper = (props) => <CodeLineWrapper {...props} />,
+}: {
+  code: string
+  file: BinFile
+  lineWrapper: (props: LineWrapperProps) => JSX.Element
+}) => {
   return (
     <BorderBox m={8} sx={{ overflowX: 'auto' }}>
       <Flex
@@ -44,11 +108,11 @@ export const CodeViewer = ({ code, file }: { code: string; file: BinFile }) => {
         style={{ marginTop: 4, marginBottom: 4, fontSize: 12 }}
         language={file.lang.name}
         codeWrapper={({ children }) => (
-          <table>
+          <table width="100%">
             <tbody>{children}</tbody>
           </table>
         )}
-        lineWrapper={(props) => <CodeLine {...props} />}
+        lineWrapper={lineWrapper}
       />
     </BorderBox>
   )

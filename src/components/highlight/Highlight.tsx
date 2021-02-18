@@ -3,6 +3,7 @@ import { CSSProperties } from 'styled-components'
 
 export type LineWrapperProps = PropsWithChildren<{
   lineNumber: number
+  codeLine: JSX.Element[]
   key: string
 }>
 
@@ -16,11 +17,11 @@ const highlighter = ({
   codeMirror: any
   value: string
   language: string
-  lineWrapper?: ({ children, lineNumber }: LineWrapperProps) => JSX.Element
+  lineWrapper?: (props: LineWrapperProps) => JSX.Element
   prefix?: string
 }) => {
-  const elements: any[] = []
-  let line: any[] = []
+  const elements: JSX.Element[] = []
+  let line: JSX.Element[] = []
   let lineNumber = 0
   let index = 0
   let lastStyle: string | null = null
@@ -38,7 +39,7 @@ const highlighter = ({
     elements.push(
       lineWrapper({
         lineNumber: ++lineNumber,
-        children: line,
+        codeLine: line,
         key: `line--${index}`,
       })
     )
@@ -83,8 +84,8 @@ export const Highlight = ({
 }: {
   code: string
   language: string
-  lineWrapper?: ({ children, lineNumber }: LineWrapperProps) => JSX.Element
-  codeWrapper?: ({ children }: PropsWithChildren<{}>) => JSX.Element
+  lineWrapper?: (props: LineWrapperProps) => JSX.Element
+  codeWrapper?: (props: PropsWithChildren<{}>) => JSX.Element
   style?: CSSProperties
 }) => {
   const prefix = 'cm-'
