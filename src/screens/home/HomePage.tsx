@@ -3,7 +3,6 @@ import Head from 'next/head'
 import {
   BorderBox,
   Box,
-  ButtonPrimary,
   Flex,
   Header,
   Heading,
@@ -13,7 +12,7 @@ import {
 import SelectLanguage from '../../components/select-language'
 import CodeEditor from '../../components/code-editor'
 import { FormEvent, useState } from 'react'
-import HeaderButton from '../../components/header-button'
+import { ButtonPrimary, HeaderButton } from '../../components/header-button'
 import CheckboxLabel from '../../components/checkbox-label'
 import {
   Language,
@@ -22,7 +21,7 @@ import {
 import { Bin } from '../bins/BinPage'
 import { useRouter } from 'next/dist/client/router'
 
-const Navbar = () => (
+export const Navbar = () => (
   <Header px={5}>
     <Header.Link fontSize={2}>
       <span>ReviewBin</span>

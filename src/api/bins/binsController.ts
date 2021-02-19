@@ -1,7 +1,7 @@
-import { bucket, db } from '../firebaseAdmin'
+import { bucket, firestore } from '../firebaseAdmin'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-export const binsRef = db.collection('bins')
+export const binsRef = firestore.collection('bins')
 
 const uploadBinToStorage = (content: string, name: string, mimetype: string) =>
   new Promise<string>((resolve, reject) => {
@@ -35,22 +35,39 @@ export const createBin = async (req: NextApiRequest, res: NextApiResponse) => {
     body.files[0].code,
     `bins/${ref.id}/${filename}`,
     'text/plain'
-  ).catch((e) => console.log(e))
+  ).catch((e) => {
+    console.error(e)
+    res.status(500).json({
+      message: 'An internal error ocurred',
+    })
+  })
 
   const bin = {
     id: ref.id,
     author: body.author,
-    files: [{ name: filename, url: fileUrl, lang: body.files[0].lang }],
+    files: [
+      {
+        id: filename.split('.')[0],
+        name: filename,
+        url: fileUrl,
+        lang: body.files[0].lang,
+      },
+    ],
   }
 
-  await ref.set(bin).catch((e) => console.error(e))
+  await ref.set(bin).catch((e) => {
+    console.error(e)
+    res.status(500).json({
+      message: 'An internal error ocurred',
+    })
+  })
 
   res.status(200).json(bin)
 }
 
 export const getBin = async (req: NextApiRequest, res: NextApiResponse) => {
   const { query } = req
-  const bin = await binsRef.doc(query.id as string).get()
+  const bin = await binsRef.doc(query.binId as string).get()
   if (!bin.exists) {
     res.status(404).json({
       message: "This bin doesn't exists",

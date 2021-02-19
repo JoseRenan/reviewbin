@@ -15,6 +15,7 @@ export const CodeLineWrapper = ({
   lineNumber,
   codeLine,
   onPlusClick,
+  key,
 }: LineWrapperProps & {
   onPlusClick?: (lineNumber: number) => void
 }) => {
@@ -25,6 +26,7 @@ export const CodeLineWrapper = ({
   return (
     <>
       <tr
+        key={key}
         onMouseEnter={() => hover(true)}
         onMouseLeave={() => hover(false)}
         style={{ width: '100%' }}>
@@ -38,7 +40,7 @@ export const CodeLineWrapper = ({
             <Text
               as={Box}
               textAlign="right"
-              fontFamily="monospace"
+              fontFamily="mono"
               color="gray.4"
               lineHeight="18px"
               sx={{ width: '100%' }}>
@@ -69,7 +71,9 @@ export const CodeLineWrapper = ({
             )}
           </Flex>
         </td>
-        <td style={{ width: '100%' }}>{codeLine}</td>
+        <td style={{ width: '100%' }}>
+          <Text fontFamily="mono">{codeLine}</Text>
+        </td>
       </tr>
       <tr>
         <td colSpan={2}>{children}</td>
@@ -100,7 +104,7 @@ export const CodeViewer = ({
           borderBottomColor: 'gray.2',
         }}>
         <StyledOcticon color="gray.4" mr={2} icon={FileIcon} />
-        <Text fontFamily="monospace" fontSize={12}>
+        <Text fontFamily="mono" fontSize={12}>
           {file.name}
         </Text>
       </Flex>
