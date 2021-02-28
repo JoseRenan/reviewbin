@@ -1,12 +1,12 @@
-import { Box, Flex, TextInput } from '@primer/components'
+import { Avatar, BorderBox, Box, Text, Timeline } from '@primer/components'
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import CodeViewer from '../../components/code-viewer'
 import { CodeLineWrapper } from '../../components/code-viewer/CodeViewer'
-import { Button, ButtonPrimary } from '../../components/header-button'
+import CommentInput from '../../components/comment-input'
 import { LineWrapperProps } from '../../components/highlight/Highlight'
 import { storage } from '../firebaseClient'
-import { BinFile, Comment } from './BinPage'
+import { BinFile, ReviewComment } from './BinPage'
 
 const CommentArea = ({
   lineNumber,
@@ -17,7 +17,7 @@ const CommentArea = ({
 }: LineWrapperProps & {
   fileId: string
   binId: string
-  comments: Comment[]
+  comments: ReviewComment[]
 }) => {
   const [showComment, setShowComment] = useState(false)
   const [comment, setComment] = useState('')
@@ -51,29 +51,51 @@ const CommentArea = ({
       codeLine={codeLine}
       onPlusClick={() => setShowComment(true)}>
       <Box
+        p={2}
         hidden={!showComment}
-        px={2}
-        py={2}
         sx={{
           fontFamily: 'normal',
           borderTop: 'solid 1px',
           borderBottom: 'solid 1px',
           borderColor: 'gray.2',
         }}>
-        <TextInput
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          block
-          as="textarea"
-        />
-        <Flex my={1} justifyContent="end">
-          <Button mr={1} onClick={() => setShowComment(false)}>
-            Cancelar
-          </Button>
-          <ButtonPrimary onClick={handleSubmit}>
-            Adicionar comentário
-          </ButtonPrimary>
-        </Flex>
+        <BorderBox width={740}>
+          {comments.length !== 0 && (
+            <Box px={1}>
+              <Timeline>
+                {comments.map((c) => (
+                  <Timeline.Item key={`comment--${c.id}`}>
+                    <Timeline.Badge>
+                      <Avatar
+                        size={28}
+                        src="https://avatars.githubusercontent.com/primer"
+                      />
+                    </Timeline.Badge>
+                    <Timeline.Body>
+                      <Text fontWeight="bold" color="gray.8">
+                        {c.author}
+                      </Text>{' '}
+                      comentou em 28/02/2021 às 19:30
+                      <Box mt={2}>{c.content}</Box>
+                    </Timeline.Body>
+                  </Timeline.Item>
+                ))}
+              </Timeline>
+            </Box>
+          )}
+          <Box
+            p={2}
+            backgroundColor="gray.1"
+            sx={{ borderTop: '1px solid', borderTopColor: 'gray.2' }}>
+            <CommentInput
+              initialOpen={comments.length === 0}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              onAddComment={handleSubmit}
+              onCancel={() => comments.length === 0 && setShowComment(false)}
+            />
+          </Box>
+        </BorderBox>
       </Box>
     </CodeLineWrapper>
   )
@@ -86,10 +108,8 @@ export const FileReview = ({
 }: {
   binId: string
   file: BinFile
-  comments: { [line: number]: Comment[] }
+  comments: { [line: number]: ReviewComment[] }
 }) => {
-  console.log(comments)
-
   const { data: fileCode } = useQuery<string>(
     `file/${binId}/${file.id}`,
     async () => {

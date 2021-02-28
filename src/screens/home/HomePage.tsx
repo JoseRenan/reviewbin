@@ -12,7 +12,7 @@ import {
 import SelectLanguage from '../../components/select-language'
 import CodeEditor from '../../components/code-editor'
 import { FormEvent, useState } from 'react'
-import { ButtonPrimary, HeaderButton } from '../../components/header-button'
+import { ButtonPrimary, HeaderButton } from '../../components/buttons'
 import CheckboxLabel from '../../components/checkbox-label'
 import {
   Language,

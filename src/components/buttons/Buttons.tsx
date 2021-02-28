@@ -4,7 +4,6 @@ import {
   ButtonInvisible,
   ButtonProps,
 } from '@primer/components'
-import { PropsWithChildren } from 'react'
 
 export const HeaderButton = ({ children, sx, ...rest }: ButtonProps) => (
   <ButtonInvisible

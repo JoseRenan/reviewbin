@@ -1,6 +1,5 @@
 import { useRouter } from 'next/dist/client/router'
 import Head from 'next/head'
-import { Fragment } from 'react'
 import { useQuery } from 'react-query'
 import { Language } from '../../components/select-language/SelectLanguage'
 import { Navbar } from '../home/HomePage'
@@ -13,14 +12,15 @@ export interface BinFile {
   url: string
 }
 
-export interface Comment {
+export interface ReviewComment {
+  id: string
   author: string
   content: string
 }
 
 export interface FileComments {
   [file: string]: {
-    [line: number]: Comment[]
+    [line: number]: ReviewComment[]
   }
 }
 

@@ -55,8 +55,12 @@ export const getReviewsFromBin = async (
           const fileComments = collection[fileId]
           if (!result[fileId]) result[fileId] = {}
           Object.keys(fileComments).forEach((lineNumber) => {
-            if (!result[fileId][lineNumber]) result[fileId][lineNumber] = []
-            result[fileId][lineNumber].push({ ...fileComments[lineNumber] })
+            result[fileId][lineNumber] = Object.keys(
+              fileComments[lineNumber]
+            ).map((commentId) => ({
+              ...fileComments[lineNumber][commentId],
+              id: commentId,
+            }))
           })
         })
         res.status(200).json(result)
