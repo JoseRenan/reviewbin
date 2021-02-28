@@ -1,7 +1,6 @@
 import { Box, BorderBox, Text, Flex, StyledOcticon } from '@primer/components'
 import { FileIcon, PlusIcon } from '@primer/octicons-react'
 import { useState } from 'react'
-import { BinFile } from '../../screens/bins/BinPage'
 import Highlight from '../highlight'
 import { LineWrapperProps } from '../highlight/Highlight'
 
@@ -15,7 +14,6 @@ export const CodeLineWrapper = ({
   lineNumber,
   codeLine,
   onPlusClick,
-  key,
 }: LineWrapperProps & {
   onPlusClick?: (lineNumber: number) => void
 }) => {
@@ -26,7 +24,6 @@ export const CodeLineWrapper = ({
   return (
     <>
       <tr
-        key={key}
         onMouseEnter={() => hover(true)}
         onMouseLeave={() => hover(false)}
         style={{ width: '100%' }}>
@@ -84,11 +81,13 @@ export const CodeLineWrapper = ({
 
 export const CodeViewer = ({
   code,
-  file,
+  fileName,
+  langName,
   lineWrapper = (props) => <CodeLineWrapper {...props} />,
 }: {
   code: string
-  file: BinFile
+  fileName: string
+  langName: string
   lineWrapper: (props: LineWrapperProps) => JSX.Element
 }) => {
   return (
@@ -105,13 +104,13 @@ export const CodeViewer = ({
         }}>
         <StyledOcticon color="gray.4" mr={2} icon={FileIcon} />
         <Text fontFamily="mono" fontSize={12}>
-          {file.name}
+          {fileName}
         </Text>
       </Flex>
       <Highlight
         code={code}
         style={{ marginTop: 4, marginBottom: 4, fontSize: 12 }}
-        language={file.lang.name}
+        language={langName}
         codeWrapper={({ children }) => (
           <table width="100%">
             <tbody>{children}</tbody>

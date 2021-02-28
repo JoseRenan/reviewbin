@@ -4,7 +4,6 @@ import { CSSProperties } from 'styled-components'
 export type LineWrapperProps = PropsWithChildren<{
   lineNumber: number
   codeLine: JSX.Element[]
-  key: string
 }>
 
 const highlighter = ({

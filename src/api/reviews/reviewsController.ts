@@ -1,5 +1,5 @@
 import { binsRef } from './../bins/binsController'
-import admin, { database } from '../firebaseAdmin'
+import { database } from '../firebaseAdmin'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export const reviewsRef = database.ref('reviews')
@@ -47,16 +47,20 @@ export const getReviewsFromBin = async (
 
     await binReviewRef.once('value', (snap) => {
       const collection = snap.val()
-      const result: { [fileId: string]: { [lineNumber: string]: any[] } } = {}
-      Object.keys(collection).forEach((fileId) => {
-        const fileComments = collection[fileId]
-        if (!result[fileId]) result[fileId] = {}
-        Object.keys(fileComments).forEach((lineNumber) => {
-          if (!result[fileId][lineNumber]) result[fileId][lineNumber] = []
-          result[fileId][lineNumber].push({ ...fileComments[lineNumber] })
+      if (!collection) {
+        res.status(200).json({})
+      } else {
+        const result: { [fileId: string]: { [lineNumber: string]: any[] } } = {}
+        Object.keys(collection).forEach((fileId) => {
+          const fileComments = collection[fileId]
+          if (!result[fileId]) result[fileId] = {}
+          Object.keys(fileComments).forEach((lineNumber) => {
+            if (!result[fileId][lineNumber]) result[fileId][lineNumber] = []
+            result[fileId][lineNumber].push({ ...fileComments[lineNumber] })
+          })
         })
-      })
-      res.status(200).json(result)
+        res.status(200).json(result)
+      }
     })
   }
 }

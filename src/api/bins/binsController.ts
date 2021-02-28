@@ -1,3 +1,4 @@
+import uniqid from 'uniqid'
 import { bucket, firestore } from '../firebaseAdmin'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
@@ -47,7 +48,7 @@ export const createBin = async (req: NextApiRequest, res: NextApiResponse) => {
     author: body.author,
     files: [
       {
-        id: filename.split('.')[0],
+        id: uniqid(),
         name: filename,
         url: fileUrl,
         lang: body.files[0].lang,

@@ -1,21 +1,10 @@
-import { Box, Flex, TextInput } from '@primer/components'
 import { useRouter } from 'next/dist/client/router'
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
-import CodeViewer from '../../components/code-viewer'
-import { CodeLineWrapper } from '../../components/code-viewer/CodeViewer'
-import { Button, ButtonPrimary } from '../../components/header-button'
-import { LineWrapperProps } from '../../components/highlight/Highlight'
+import { Fragment } from 'react'
+import { useQuery } from 'react-query'
 import { Language } from '../../components/select-language/SelectLanguage'
-import { storage } from '../firebaseClient'
 import { Navbar } from '../home/HomePage'
-
-const getBinFromStorage = async (url: string) => {
-  const ref = storage.refFromURL(url)
-  const authorizedUrl = await ref.getDownloadURL()
-  const response = await fetch(authorizedUrl)
-  return (await response.blob()).text()
-}
+import { FileReview } from './FileReview'
 
 export interface BinFile {
   id: string
@@ -24,90 +13,46 @@ export interface BinFile {
   url: string
 }
 
+export interface Comment {
+  author: string
+  content: string
+}
+
+export interface FileComments {
+  [file: string]: {
+    [line: number]: Comment[]
+  }
+}
+
 export interface Bin {
   id: string
   author: string
   files: BinFile[]
 }
 
-const CommentArea = ({
-  lineNumber,
-  file,
-  codeLine,
-  binId,
-  key,
-}: LineWrapperProps & { file: BinFile; binId: string }) => {
-  const [showComment, setShowComment] = useState(false)
-  const [comment, setComment] = useState('')
-
-  const handleSubmit = async () => {
-    const result = await fetch(`/api/bins/${binId}/reviews`, {
-      method: 'POST',
-      body: JSON.stringify({
-        lineNumber,
-        fileId: file.id,
-        comment: {
-          content: comment,
-          author: 'anonymous',
-        },
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-  }
-
-  return (
-    <CodeLineWrapper
-      lineNumber={lineNumber}
-      codeLine={codeLine}
-      key={key}
-      onPlusClick={() => setShowComment(true)}>
-      <Box
-        hidden={!showComment}
-        px={2}
-        py={2}
-        sx={{
-          fontFamily: 'normal',
-          borderTop: 'solid 1px',
-          borderBottom: 'solid 1px',
-          borderColor: 'gray.2',
-        }}>
-        <TextInput
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          block
-          as="textarea"
-        />
-        <Flex my={1} justifyContent="end">
-          <Button mr={1} onClick={() => setShowComment(false)}>
-            Cancelar
-          </Button>
-          <ButtonPrimary onClick={handleSubmit}>
-            Adicionar comentário
-          </ButtonPrimary>
-        </Flex>
-      </Box>
-    </CodeLineWrapper>
-  )
-}
-
 export const BinPage = () => {
   const { query } = useRouter()
-  const [bin, setBin] = useState<Bin>()
-  const [content, setContent] = useState<string>()
-
-  useEffect(() => {
-    if (query.id) {
-      fetch(`/api/bins/${query.id}`).then(async (data) => {
-        const newBin = await data.json()
-        setBin(newBin)
-        if (newBin?.files[0].url) {
-          setContent(await getBinFromStorage(newBin.files[0].url))
-        }
-      })
+  const { data: bin, isLoading: isLoadingBin } = useQuery<Bin>(
+    `bin/${query.id}`,
+    async () => {
+      if (query.id) {
+        const response = await fetch(`/api/bins/${query.id}`)
+        if (!response.ok) throw new Error('An error ocurred')
+        return response.json()
+      }
     }
-  }, [query.id])
+  )
+
+  const {
+    data: comments,
+    isLoading: isLoadingComments,
+  } = useQuery<FileComments>(`reviews/${query.id}`, async () => {
+    if (query.id) {
+      const response = await fetch(`/api/bins/${query.id}/reviews`)
+      if (!response.ok) throw new Error('An error ocurred')
+      return response.json()
+    }
+  })
 
   return (
     <div>
@@ -116,15 +61,16 @@ export const BinPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      {bin && content && (
-        <CodeViewer
-          code={content ?? ''}
-          file={bin.files[0]}
-          lineWrapper={(props) => (
-            <CommentArea {...props} file={bin.files[0]} binId={bin.id} />
-          )}
-        />
-      )}
+      {!isLoadingBin &&
+        !isLoadingComments &&
+        bin?.files.map((file) => (
+          <FileReview
+            key={file.id}
+            binId={query.id as string}
+            file={file}
+            comments={comments?.[file.id] ?? []}
+          />
+        ))}
     </div>
   )
 }
