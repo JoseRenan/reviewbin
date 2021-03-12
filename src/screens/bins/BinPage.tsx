@@ -1,7 +1,7 @@
 import { useRouter } from 'next/dist/client/router'
 import Head from 'next/head'
-import { useQuery } from 'react-query'
 import { Language } from '../../components/select-language/SelectLanguage'
+import { useBinQuery, useCommentsQuery } from '../../hooks/queries'
 import { Navbar } from '../home/HomePage'
 import { FileReview } from './FileReview'
 
@@ -13,7 +13,7 @@ export interface BinFile {
 }
 
 export interface ReviewComment {
-  id: string
+  id?: string
   author: string
   content: string
 }
@@ -32,27 +32,11 @@ export interface Bin {
 
 export const BinPage = () => {
   const { query } = useRouter()
-  const { data: bin, isLoading: isLoadingBin } = useQuery<Bin>(
-    `bin/${query.id}`,
-    async () => {
-      if (query.id) {
-        const response = await fetch(`/api/bins/${query.id}`)
-        if (!response.ok) throw new Error('An error ocurred')
-        return response.json()
-      }
-    }
-  )
+  const { data: bin, isLoading: isLoadingBin } = useBinQuery(query.id as string)
 
-  const {
-    data: comments,
-    isLoading: isLoadingComments,
-  } = useQuery<FileComments>(`reviews/${query.id}`, async () => {
-    if (query.id) {
-      const response = await fetch(`/api/bins/${query.id}/reviews`)
-      if (!response.ok) throw new Error('An error ocurred')
-      return response.json()
-    }
-  })
+  const { data: comments, isLoading: isLoadingComments } = useCommentsQuery(
+    query.id as string
+  )
 
   return (
     <div>
@@ -66,7 +50,7 @@ export const BinPage = () => {
         bin?.files.map((file) => (
           <FileReview
             key={file.id}
-            binId={query.id as string}
+            binId={bin.id}
             file={file}
             comments={comments?.[file.id] ?? []}
           />

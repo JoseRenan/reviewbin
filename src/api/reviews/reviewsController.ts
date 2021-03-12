@@ -27,7 +27,9 @@ export const createReview = async (
 
     res.status(201).json({
       id: newReview.key,
-      ...body.comment,
+      fileId: body.fileId,
+      lineNumber: body.lineNumber,
+      comment: body.comment,
     })
   }
 }

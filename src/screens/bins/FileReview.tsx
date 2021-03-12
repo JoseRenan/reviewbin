@@ -1,11 +1,11 @@
 import { Avatar, BorderBox, Box, Text, Timeline } from '@primer/components'
 import { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
 import CodeViewer from '../../components/code-viewer'
 import { CodeLineWrapper } from '../../components/code-viewer/CodeViewer'
 import CommentInput from '../../components/comment-input'
 import { LineWrapperProps } from '../../components/highlight/Highlight'
-import { storage } from '../firebaseClient'
+import { useAddCommentMutation } from '../../hooks/mutations'
+import { useFileQuery } from '../../hooks/queries'
 import { BinFile, ReviewComment } from './BinPage'
 
 const CommentArea = ({
@@ -21,6 +21,7 @@ const CommentArea = ({
 }) => {
   const [showComment, setShowComment] = useState(false)
   const [comment, setComment] = useState('')
+  const addComment = useAddCommentMutation(binId)
 
   useEffect(() => {
     if (!showComment && comments.length > 0) {
@@ -28,21 +29,16 @@ const CommentArea = ({
     }
   }, [comments.length])
 
-  const handleSubmit = async () => {
-    await fetch(`/api/bins/${binId}/reviews`, {
-      method: 'POST',
-      body: JSON.stringify({
-        lineNumber,
-        fileId: fileId,
-        comment: {
-          content: comment,
-          author: 'anonymous',
-        },
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
+  const handleSubmit = () => {
+    addComment.mutateAsync({
+      lineNumber,
+      fileId,
+      comment: {
+        content: comment,
+        author: 'anonymous',
       },
     })
+    setComment('')
   }
 
   return (
@@ -110,17 +106,7 @@ export const FileReview = ({
   file: BinFile
   comments: { [line: number]: ReviewComment[] }
 }) => {
-  const { data: fileCode } = useQuery<string>(
-    `file/${binId}/${file.id}`,
-    async () => {
-      const ref = storage.refFromURL(file.url)
-      const authorizedUrl = await ref.getDownloadURL()
-      const response = await fetch(authorizedUrl)
-      if (!response.ok) throw new Error('An error ocurred')
-      return response.text()
-    }
-  )
-
+  const { data: fileCode } = useFileQuery(file.url)
   return (
     <CodeViewer
       code={fileCode ?? ''}

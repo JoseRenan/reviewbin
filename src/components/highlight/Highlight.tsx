@@ -39,7 +39,6 @@ const highlighter = ({
       lineWrapper({
         lineNumber: ++lineNumber,
         codeLine: line,
-        key: `line--${index}`,
       })
     )
     line = []
