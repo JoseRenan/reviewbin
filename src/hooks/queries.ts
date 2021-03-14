@@ -1,4 +1,4 @@
-import { Bin, FileComments } from './../screens/bins/BinPage'
+import { Bin, FileComments } from '../screens/bins/FilesTab'
 import { storage } from './../screens/firebaseClient'
 import { useQuery } from 'react-query'
 

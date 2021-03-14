@@ -1,1 +1,1 @@
-export { BinLayout as default } from '../../src/screens/bins/BinLayout'
+export { BinPage as default } from '../../src/screens/bins/BinPage'

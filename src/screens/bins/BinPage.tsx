@@ -1,56 +1,74 @@
+import { Box, Heading, StyledOcticon, TabNav, Text } from '@primer/components'
+import { CodeSquareIcon, CommentDiscussionIcon } from '@primer/octicons-react'
 import { useRouter } from 'next/dist/client/router'
-import { Language } from '../../components/select-language/SelectLanguage'
 import { useBinQuery, useCommentsQuery } from '../../hooks/queries'
-import { FileReview } from './FileReview'
+import { MainLayout } from '../MainLayout'
+import { FilesTab } from './FilesTab'
 
-export interface BinFile {
-  id: string
-  lang: Language
-  name: string
-  url: string
-}
+export const BinPage = () => {
+  const {
+    query: { tab, id: binId },
+    ...router
+  } = useRouter()
 
-export interface ReviewComment {
-  id?: string
-  author: string
-  content: string
-}
+  const { data: bin, isLoading: isLoadingBin } = useBinQuery(binId as string)
 
-export interface FileComments {
-  [file: string]: {
-    [line: number]: ReviewComment[]
-  }
-}
+  const { data: comments, isLoading: isLoadingComments } = useCommentsQuery(
+    binId as string
+  )
 
-export interface Bin {
-  id: string
-  author: string
-  files: BinFile[]
-}
-
-export const BinPage = ({
-  bin,
-  comments,
-  isLoadingBin,
-  isLoadingComments,
-}: {
-  bin: Bin
-  comments: FileComments
-  isLoadingBin: boolean
-  isLoadingComments: boolean
-}) => {
   return (
-    <>
-      {!isLoadingBin &&
-        !isLoadingComments &&
-        bin?.files.map((file) => (
-          <FileReview
-            key={file.id}
-            binId={bin.id}
-            file={file}
-            comments={comments?.[file.id] ?? []}
+    <MainLayout>
+      <Box mx={200} my={4}>
+        <Heading fontSize={5} mb={2} fontWeight="normal">
+          Testeee
+        </Heading>
+        <Text fontSize={1} color="text.gray">
+          Criado por <Text fontWeight="bold">anonymous</Text> em{' '}
+          <Text fontWeight="bold">19/03/2021</Text>
+        </Text>
+        <TabNav my={4}>
+          <TabNav.Link
+            selected={tab !== 'files'}
+            style={{ cursor: 'pointer' }}
+            onClick={() =>
+              router.push(
+                { query: { tab: 'conversation', id: binId } },
+                undefined,
+                {
+                  shallow: true,
+                }
+              )
+            }>
+            <StyledOcticon icon={CommentDiscussionIcon} mr={2} size={16} />
+            Comentários
+          </TabNav.Link>
+          <TabNav.Link
+            selected={tab === 'files'}
+            style={{ cursor: 'pointer' }}
+            onClick={() =>
+              router.push({ query: { tab: 'files', id: binId } }, undefined, {
+                shallow: true,
+              })
+            }>
+            <StyledOcticon icon={CodeSquareIcon} mr={2} size={16} />
+            Arquivos
+          </TabNav.Link>
+        </TabNav>
+        {tab === 'files' && (
+          <FilesTab
+            bin={bin!}
+            comments={comments!}
+            isLoadingBin={isLoadingBin}
+            isLoadingComments={isLoadingComments}
           />
-        ))}
-    </>
+        )}
+        {tab !== 'files' && (
+          <div>
+            Vai ter comentários aqui, clica na outra seção que tem bolo...
+          </div>
+        )}
+      </Box>
+    </MainLayout>
   )
 }

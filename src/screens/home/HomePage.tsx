@@ -18,7 +18,7 @@ import {
   Language,
   LANGUAGES,
 } from '../../components/select-language/SelectLanguage'
-import { Bin } from '../bins/BinPage'
+import { Bin } from '../bins/FilesTab'
 import { useRouter } from 'next/dist/client/router'
 import { MainLayout } from '../MainLayout'
 

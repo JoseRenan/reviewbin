@@ -6,7 +6,7 @@ import CommentInput from '../../components/comment-input'
 import { LineWrapperProps } from '../../components/highlight/Highlight'
 import { useAddCommentMutation } from '../../hooks/mutations'
 import { useFileQuery } from '../../hooks/queries'
-import { BinFile, ReviewComment } from './BinPage'
+import { BinFile, ReviewComment } from './FilesTab'
 
 const CommentArea = ({
   lineNumber,

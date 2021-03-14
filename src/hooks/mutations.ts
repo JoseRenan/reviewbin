@@ -1,4 +1,4 @@
-import { FileComments } from './../screens/bins/BinPage'
+import { FileComments } from '../screens/bins/FilesTab'
 import { queryClient } from './../../pages/_app'
 import { useMutation } from 'react-query'
 
