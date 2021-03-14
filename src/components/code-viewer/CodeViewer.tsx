@@ -91,7 +91,7 @@ export const CodeViewer = ({
   lineWrapper: (props: LineWrapperProps) => JSX.Element
 }) => {
   return (
-    <BorderBox m={8} sx={{ overflowX: 'auto' }}>
+    <BorderBox sx={{ overflowX: 'auto' }}>
       <Flex
         height={40}
         px={3}

@@ -20,6 +20,7 @@ import {
 } from '../../components/select-language/SelectLanguage'
 import { Bin } from '../bins/BinPage'
 import { useRouter } from 'next/dist/client/router'
+import { MainLayout } from '../MainLayout'
 
 export const Navbar = () => (
   <Header px={5}>
@@ -96,18 +97,13 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
 export const HomePage = () => {
   const { push } = useRouter()
   return (
-    <div>
-      <Head>
-        <title>ReviewBin</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <Navbar />
+    <MainLayout>
       <Box px={5} py={4}>
         <Heading fontSize={4} mb={3}>
           Crie um novo bin
         </Heading>
         <CreateBinForm onSubmit={(bin) => push(`/bins/${bin.id}`)} />
       </Box>
-    </div>
+    </MainLayout>
   )
 }
