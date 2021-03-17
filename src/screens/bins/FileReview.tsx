@@ -1,4 +1,11 @@
-import { Avatar, BorderBox, Box, Text, Timeline } from '@primer/components'
+import {
+  Avatar,
+  BorderBox,
+  Box,
+  Flex,
+  Text,
+  Timeline,
+} from '@primer/components'
 import { useEffect, useState } from 'react'
 import CodeViewer from '../../components/code-viewer'
 import { CodeLineWrapper } from '../../components/code-viewer/CodeViewer'
@@ -108,19 +115,26 @@ export const FileReview = ({
 }) => {
   const { data: fileCode } = useFileQuery(file.url)
   return (
-    <CodeViewer
-      code={fileCode ?? ''}
-      fileName={file.name}
-      langName={file.lang.name}
-      lineWrapper={(props) => (
-        <CommentArea
-          {...props}
-          key={`${file.id}--${props.lineNumber}`}
-          comments={comments[props.lineNumber]}
-          fileId={file.id}
-          binId={binId}
+    <Flex>
+      <Box width={450} backgroundColor="gray.1" mr={4}>
+        Aqui terá a arvore de arquivos
+      </Box>
+      <Box width="100%">
+        <CodeViewer
+          code={fileCode ?? ''}
+          fileName={file.name}
+          langName={file.lang.name}
+          lineWrapper={(props) => (
+            <CommentArea
+              {...props}
+              key={`${file.id}--${props.lineNumber}`}
+              comments={comments[props.lineNumber]}
+              fileId={file.id}
+              binId={binId}
+            />
+          )}
         />
-      )}
-    />
+      </Box>
+    </Flex>
   )
 }

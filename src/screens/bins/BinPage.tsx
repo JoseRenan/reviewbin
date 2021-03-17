@@ -4,6 +4,7 @@ import { useRouter } from 'next/dist/client/router'
 import { useBinQuery, useCommentsQuery } from '../../hooks/queries'
 import { MainLayout } from '../MainLayout'
 import { FilesTab } from './FilesTab'
+import { CommentsTab } from './CommentsTab'
 
 export const BinPage = () => {
   const {
@@ -66,6 +67,11 @@ export const BinPage = () => {
         {tab !== 'files' && (
           <div>
             Vai ter comentários aqui, clica na outra seção que tem bolo...
+            <CommentsTab
+              comments={comments!}
+              isLoadingBin={isLoadingBin}
+              isLoadingComments={isLoadingComments}
+            />
           </div>
         )}
       </Box>
