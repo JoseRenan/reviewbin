@@ -7,12 +7,14 @@ export type LineWrapperProps = PropsWithChildren<{
 }>
 
 const highlighter = ({
+  onlyLine,
   codeMirror,
   value,
   language,
   lineWrapper = ({ children }) => <>{children}</>,
   prefix = 'cm-',
 }: {
+  onlyLine?: number
   codeMirror: any
   value: string
   language: string
@@ -35,12 +37,15 @@ const highlighter = ({
   }
 
   const pushLine = () => {
-    elements.push(
-      lineWrapper({
-        lineNumber: ++lineNumber,
-        codeLine: line,
-      })
-    )
+    lineNumber++
+    if (!onlyLine || (onlyLine && onlyLine === lineNumber)) {
+      elements.push(
+        lineWrapper({
+          lineNumber: lineNumber,
+          codeLine: line,
+        })
+      )
+    }
     line = []
   }
 
@@ -68,6 +73,7 @@ const highlighter = ({
   )
 
   pushToken(tokenBuf, lastStyle)
+
   pushLine()
 
   return elements
@@ -76,10 +82,12 @@ const highlighter = ({
 export const Highlight = ({
   code,
   language,
+  onlyLine,
   lineWrapper,
   codeWrapper = ({ children }) => <>{children}</>,
   style,
 }: {
+  onlyLine?: number
   code: string
   language: string
   lineWrapper?: (props: LineWrapperProps) => JSX.Element
@@ -109,6 +117,7 @@ export const Highlight = ({
         <pre style={style} className={`${prefix}s-solarized`}>
           {codeWrapper({
             children: highlighter({
+              onlyLine,
               codeMirror: CodeMirror,
               value: code,
               language,

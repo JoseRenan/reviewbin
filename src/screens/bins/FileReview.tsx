@@ -15,7 +15,7 @@ import { useAddCommentMutation } from '../../hooks/mutations'
 import { useFileQuery } from '../../hooks/queries'
 import { BinFile, ReviewComment } from './FilesTab'
 
-const CommentArea = ({
+export const CommentArea = ({
   lineNumber,
   comments = [],
   fileId,
@@ -78,7 +78,12 @@ const CommentArea = ({
                       <Text fontWeight="bold" color="gray.8">
                         {c.author}
                       </Text>{' '}
-                      comentou em 28/02/2021 às 19:30
+                      {c.timestamp && (
+                        <>
+                          comentou em{' '}
+                          {new Date(c.timestamp).toLocaleDateString()}
+                        </>
+                      )}
                       <Box mt={2}>{c.content}</Box>
                     </Timeline.Body>
                   </Timeline.Item>

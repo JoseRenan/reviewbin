@@ -14,6 +14,7 @@ export interface ReviewComment {
   id?: string
   author: string
   content: string
+  timestamp?: number
 }
 
 export interface FileComments {

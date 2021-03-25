@@ -1,5 +1,5 @@
 import { binsRef } from './../bins/binsController'
-import { database } from '../firebaseAdmin'
+import admin, { database } from '../firebaseAdmin'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export const reviewsRef = database.ref('reviews')
@@ -23,6 +23,7 @@ export const createReview = async (
     const newReview = await binReviewRef.push({
       author: body.comment.author,
       content: body.comment.content,
+      timestamp: admin.database.ServerValue.TIMESTAMP,
     })
 
     res.status(201).json({

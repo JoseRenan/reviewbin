@@ -66,8 +66,8 @@ export const BinPage = () => {
         )}
         {tab !== 'files' && (
           <div>
-            Vai ter comentários aqui, clica na outra seção que tem bolo...
             <CommentsTab
+              bin={bin!}
               comments={comments!}
               isLoadingBin={isLoadingBin}
               isLoadingComments={isLoadingComments}

@@ -83,8 +83,10 @@ export const CodeViewer = ({
   code,
   fileName,
   langName,
+  onlyLine,
   lineWrapper = (props) => <CodeLineWrapper {...props} />,
 }: {
+  onlyLine?: number
   code: string
   fileName: string
   langName: string
@@ -108,6 +110,7 @@ export const CodeViewer = ({
         </Text>
       </Flex>
       <Highlight
+        onlyLine={onlyLine}
         code={code}
         style={{ marginTop: 4, marginBottom: 4, fontSize: 12 }}
         language={langName}
