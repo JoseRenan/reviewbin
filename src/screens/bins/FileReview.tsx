@@ -120,26 +120,21 @@ export const FileReview = ({
 }) => {
   const { data: fileCode } = useFileQuery(file.url)
   return (
-    <Flex>
-      <Box width={450} backgroundColor="gray.1" mr={4}>
-        Aqui terá a arvore de arquivos
-      </Box>
-      <Box width="100%">
-        <CodeViewer
-          code={fileCode ?? ''}
-          fileName={file.name}
-          langName={file.lang.name}
-          lineWrapper={(props) => (
-            <CommentArea
-              {...props}
-              key={`${file.id}--${props.lineNumber}`}
-              comments={comments[props.lineNumber]}
-              fileId={file.id}
-              binId={binId}
-            />
-          )}
-        />
-      </Box>
-    </Flex>
+    <Box width="100%" sx={{ maxWidth: 'inherit' }}>
+      <CodeViewer
+        code={fileCode ?? ''}
+        fileName={file.name}
+        langName={file.lang.name}
+        lineWrapper={(props) => (
+          <CommentArea
+            {...props}
+            key={`${file.id}--${props.lineNumber}`}
+            comments={comments[props.lineNumber]}
+            fileId={file.id}
+            binId={binId}
+          />
+        )}
+      />
+    </Box>
   )
 }

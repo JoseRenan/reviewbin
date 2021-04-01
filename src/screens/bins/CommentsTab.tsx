@@ -17,25 +17,26 @@ const CodeComment = ({
 
   return (
     <>
-      {Object.keys(comments).map((lineNumber) => (
-        <Box width="100%" mb={4}>
-          <CodeViewer
-            onlyLine={+lineNumber}
-            code={fileCode ?? ''}
-            fileName={file.name}
-            langName={file.lang.name}
-            lineWrapper={(props) => (
-              <CommentArea
-                {...props}
-                key={`${file.id}--${props.lineNumber}`}
-                comments={comments[props.lineNumber]}
-                fileId={file.id}
-                binId={binId}
-              />
-            )}
-          />
-        </Box>
-      ))}
+      {comments &&
+        Object.keys(comments).map((lineNumber) => (
+          <Box width="100%" mb={4}>
+            <CodeViewer
+              onlyLine={+lineNumber}
+              code={fileCode ?? ''}
+              fileName={file.name}
+              langName={file.lang.name}
+              lineWrapper={(props) => (
+                <CommentArea
+                  {...props}
+                  key={`${file.id}--${props.lineNumber}`}
+                  comments={comments[props.lineNumber]}
+                  fileId={file.id}
+                  binId={binId}
+                />
+              )}
+            />
+          </Box>
+        ))}
     </>
   )
 }

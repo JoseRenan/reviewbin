@@ -6,6 +6,7 @@ import {
   Flex,
   Header,
   Heading,
+  Text,
   TextInput,
   Tooltip,
 } from '@primer/components'
@@ -59,13 +60,15 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Flex>
-        <TextInput width={300} mr={2} placeholder="Nome do bin" />
-        <SelectLanguage
-          value={lang.displayName}
-          onChange={(lang) => setLang(lang)}
-        />
+      <TextInput width={300} mr={2} placeholder="Nome do bin" />
+      <Flex alignItems="center" my={3}>
+        <Text>Faça upload de um .zip ou cole seu código abaixo</Text>
+        <TextInput ml={2} type="file" />
       </Flex>
+      <SelectLanguage
+        value={lang.displayName}
+        onChange={(lang) => setLang(lang)}
+      />
       <BorderBox my={3}>
         <CodeEditor
           mode={lang.name}

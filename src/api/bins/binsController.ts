@@ -1,8 +1,23 @@
 import uniqid from 'uniqid'
+import AdmZip from 'adm-zip'
+import multer from 'multer'
 import { bucket, firestore } from '../firebaseAdmin'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import initMiddleware from '../initMiddleware'
 
 export const binsRef = firestore.collection('bins')
+
+const upload = multer()
+
+const multerAny = initMiddleware(upload.any())
+
+export type NextApiRequestWithFormData = NextApiRequest & {
+  files: any[]
+}
+
+type BlobCorrected = Blob & {
+  buffer: Buffer
+}
 
 const uploadBinToStorage = (content: string, name: string, mimetype: string) =>
   new Promise<string>((resolve, reject) => {
@@ -64,6 +79,73 @@ export const createBin = async (req: NextApiRequest, res: NextApiResponse) => {
   })
 
   res.status(200).json(bin)
+}
+
+export const uploadBinZip = async (
+  req: NextApiRequestWithFormData,
+  res: NextApiResponse
+) => {
+  await multerAny(req, res)
+
+  // This operation expects a single file upload.
+  if (!req.files?.length || req.files.length > 1) {
+    res.status(400).json({ message: 'A .zip file expected' })
+    return
+  }
+
+  const blob: BlobCorrected = req.files[0]
+
+  var zip = new AdmZip(blob.buffer)
+  var zipEntries = zip.getEntries()
+
+  const ref = binsRef.doc()
+
+  const promises = zipEntries.map(async (zipEntry) => {
+    if (!zipEntry.isDirectory) {
+      const fileUrl = await uploadBinToStorage(
+        zipEntry.getData().toString('utf8'),
+        `bins/${ref.id}/${zipEntry.entryName}`,
+        'text/plain'
+      ).catch((e) => {
+        console.error(e)
+        res.status(500).json({
+          message: 'An internal error ocurred',
+        })
+      })
+
+      const fileExtension = zipEntry.entryName.split('.')
+
+      return {
+        id: uniqid(),
+        name: zipEntry.entryName,
+        url: fileUrl,
+        lang: {
+          name:
+            fileExtension.length > 1
+              ? fileExtension[fileExtension.length - 1]
+              : 'plaintext',
+        },
+      }
+    }
+  })
+
+  const files = await Promise.all(promises)
+
+  const bin = {
+    id: ref.id,
+    files: files.filter((file) => file !== undefined),
+  }
+
+  console.log(bin)
+
+  await ref.set(bin).catch((e) => {
+    console.error(e)
+    res.status(500).json({
+      message: 'An internal error ocurred',
+    })
+  })
+
+  res.status(201).json({ bin })
 }
 
 export const getBin = async (req: NextApiRequest, res: NextApiResponse) => {

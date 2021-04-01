@@ -11,9 +11,11 @@
     "@primer/components": "^23.0.4",
     "@primer/octicons-react": "^12.0.0",
     "ace-builds": "^1.4.12",
+    "adm-zip": "^0.5.5",
     "codemirror": "^5.59.2",
     "firebase": "^8.2.7",
     "firebase-admin": "^9.5.0",
+    "multer": "^1.4.2",
     "next": "10.0.6",
     "react": "17.0.1",
     "react-ace": "^9.3.0",
@@ -23,7 +25,9 @@
     "uniqid": "^5.3.0"
   },
   "devDependencies": {
+    "@types/adm-zip": "^0.4.33",
     "@types/codemirror": "^0.0.108",
+    "@types/multer": "^1.4.5",
     "@types/node": "^14.14.28",
     "@types/react": "^17.0.2",
     "@types/uniqid": "^5.2.0",

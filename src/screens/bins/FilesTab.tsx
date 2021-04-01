@@ -1,6 +1,5 @@
-import { useRouter } from 'next/dist/client/router'
+import { Box, Flex } from '@primer/components'
 import { Language } from '../../components/select-language/SelectLanguage'
-import { useBinQuery, useCommentsQuery } from '../../hooks/queries'
 import { FileReview } from './FileReview'
 
 export interface BinFile {
@@ -41,17 +40,23 @@ export const FilesTab = ({
   isLoadingComments: boolean
 }) => {
   return (
-    <>
-      {!isLoadingBin &&
-        !isLoadingComments &&
-        bin?.files.map((file) => (
-          <FileReview
-            key={file.id}
-            binId={bin.id}
-            file={file}
-            comments={comments?.[file.id] ?? []}
-          />
-        ))}
-    </>
+    <Flex>
+      <Box width={450} backgroundColor="gray.1" mr={4}>
+        Aqui terá a arvore de arquivos
+      </Box>
+      <Flex flexDirection="column" sx={{ width: 'calc(100% - 450px)' }}>
+        {!isLoadingBin &&
+          !isLoadingComments &&
+          bin?.files.map((file) => (
+            <Box key={file.id} mb={4}>
+              <FileReview
+                binId={bin.id}
+                file={file}
+                comments={comments?.[file.id] ?? []}
+              />
+            </Box>
+          ))}
+      </Flex>
+    </Flex>
   )
 }
