@@ -39,14 +39,20 @@ export const Navbar = () => (
 
 const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
   const [lang, setLang] = useState<Language>(LANGUAGES.text)
+  const [name, setName] = useState('')
+  const [file, setFile] = useState<File | null>()
   const [code, setCode] = useState('// Cole seu código aqui')
   const [anonymousReview, setAnonymousReview] = useState(true)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (file) {
+      return handleSubmitFile()
+    }
     const result = await fetch('/api/bins', {
       method: 'POST',
       body: JSON.stringify({
+        name,
         anonymousReview,
         author: 'anonymous',
         files: [{ lang, code, filename: 'main' }],
@@ -58,25 +64,52 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
     onSubmit((await result.json()) as Bin)
   }
 
+  const handleSubmitFile = async () => {
+    const formData = new FormData()
+    if (file) {
+      formData.append('file', file as Blob)
+      formData.append('name', name)
+      formData.append('author', 'anonymous')
+    }
+    const result = await fetch('/api/bins/upload', {
+      method: 'POST',
+      body: formData,
+    })
+    onSubmit((await result.json()) as Bin)
+  }
+
   return (
     <form onSubmit={handleSubmit}>
-      <TextInput width={300} mr={2} placeholder="Nome do bin" />
+      <TextInput
+        width={300}
+        mr={2}
+        placeholder="Nome do bin"
+        onChange={(e) => setName(e.target.value)}
+      />
       <Flex alignItems="center" my={3}>
         <Text>Faça upload de um .zip ou cole seu código abaixo</Text>
-        <TextInput ml={2} type="file" />
-      </Flex>
-      <SelectLanguage
-        value={lang.displayName}
-        onChange={(lang) => setLang(lang)}
-      />
-      <BorderBox my={3}>
-        <CodeEditor
-          mode={lang.name}
-          style={{ borderRadius: 6 }}
-          value={code}
-          onChange={(newCode) => setCode(newCode)}
+        <TextInput
+          ml={2}
+          type="file"
+          onChange={(e) => setFile(e.target.files?.item(0))}
         />
-      </BorderBox>
+      </Flex>
+      {!file && (
+        <>
+          <SelectLanguage
+            value={lang.displayName}
+            onChange={(lang) => setLang(lang)}
+          />
+          <BorderBox my={3}>
+            <CodeEditor
+              mode={lang.name}
+              style={{ borderRadius: 6 }}
+              value={code}
+              onChange={(newCode) => setCode(newCode)}
+            />
+          </BorderBox>
+        </>
+      )}
       <Flex justifyContent="space-between">
         <Tooltip aria-label="Você precisa se cadastrar para desabilitar essa opção">
           <CheckboxLabel

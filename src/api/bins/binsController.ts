@@ -60,6 +60,7 @@ export const createBin = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const bin = {
     id: ref.id,
+    name: body.name,
     author: body.author,
     files: [
       {
@@ -136,8 +137,6 @@ export const uploadBinZip = async (
     files: files.filter((file) => file !== undefined),
   }
 
-  console.log(bin)
-
   await ref.set(bin).catch((e) => {
     console.error(e)
     res.status(500).json({
@@ -145,7 +144,7 @@ export const uploadBinZip = async (
     })
   })
 
-  res.status(201).json({ bin })
+  res.status(201).json(bin)
 }
 
 export const getBin = async (req: NextApiRequest, res: NextApiResponse) => {
