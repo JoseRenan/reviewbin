@@ -1,4 +1,11 @@
-import { Box, Flex } from '@primer/components'
+import {
+  BorderBox,
+  Box,
+  Flex,
+  Heading,
+  SideNav,
+  Text,
+} from '@primer/components'
 import { Language } from '../../components/select-language/SelectLanguage'
 import { FileReview } from './FileReview'
 
@@ -41,14 +48,45 @@ export const FilesTab = ({
 }) => {
   return (
     <Flex>
-      <Box width={450} backgroundColor="gray.1" mr={4}>
-        Aqui terá a arvore de arquivos
-      </Box>
-      <Flex flexDirection="column" sx={{ width: 'calc(100% - 450px)' }}>
+      <BorderBox
+        p={3}
+        backgroundColor="bg.secondary"
+        width={480}
+        mr={4}
+        height="min-content">
+        <BorderBox
+          borderWidth={0}
+          borderBottomWidth={1}
+          borderRadius={0}
+          mb={2}
+          pb={1}>
+          <Heading as="h5" fontSize={1} color="text.secondary">
+            Files
+          </Heading>
+        </BorderBox>
+        <SideNav variant="lightweight">
+          {bin?.files.map((file) => (
+            <SideNav.Link href={`#${file.id}`} key={file.id}>
+              <Text fontFamily="monospace">
+                {file.name.split('/').length >= 4
+                  ? `${file.name
+                      .split('/')
+                      .slice(0, 2)
+                      .join('/')}/.../${file.name
+                      .split('/')
+                      .slice(-1)
+                      .join('/')}`
+                  : file.name}
+              </Text>
+            </SideNav.Link>
+          ))}
+        </SideNav>
+      </BorderBox>
+      <Flex flexDirection="column" sx={{ width: 'calc(100% - 480px)' }}>
         {!isLoadingBin &&
           !isLoadingComments &&
           bin?.files.map((file) => (
-            <Box key={file.id} mb={4}>
+            <Box key={file.id} mb={4} id={file.id}>
               <FileReview
                 binId={bin.id}
                 file={file}
