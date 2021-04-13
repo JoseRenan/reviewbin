@@ -3,16 +3,14 @@ import { CodeSquareIcon, CommentDiscussionIcon } from '@primer/octicons-react'
 import { useRouter } from 'next/dist/client/router'
 import { useBinQuery, useCommentsQuery } from '../../hooks/queries'
 import { MainLayout } from '../MainLayout'
-import { FilesTab } from './FilesTab'
+import { Bin, FilesTab } from './FilesTab'
 import { CommentsTab } from './CommentsTab'
 
-export const BinPage = () => {
+export const BinPage = ({ bin }: { bin: Bin }) => {
   const {
     query: { tab, id: binId },
     ...router
   } = useRouter()
-
-  const { data: bin, isLoading: isLoadingBin } = useBinQuery(binId as string)
 
   const { data: comments, isLoading: isLoadingComments } = useCommentsQuery(
     binId as string
@@ -60,7 +58,6 @@ export const BinPage = () => {
           <FilesTab
             bin={bin!}
             comments={comments!}
-            isLoadingBin={isLoadingBin}
             isLoadingComments={isLoadingComments}
           />
         )}
@@ -69,7 +66,6 @@ export const BinPage = () => {
             <CommentsTab
               bin={bin!}
               comments={comments!}
-              isLoadingBin={isLoadingBin}
               isLoadingComments={isLoadingComments}
             />
           </div>

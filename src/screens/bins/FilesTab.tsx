@@ -14,6 +14,7 @@ export interface BinFile {
   lang: Language
   name: string
   url: string
+  code?: string
 }
 
 export interface ReviewComment {
@@ -38,12 +39,10 @@ export interface Bin {
 export const FilesTab = ({
   bin,
   comments,
-  isLoadingBin,
   isLoadingComments,
 }: {
   bin: Bin
   comments: FileComments
-  isLoadingBin: boolean
   isLoadingComments: boolean
 }) => {
   return (
@@ -83,8 +82,7 @@ export const FilesTab = ({
         </SideNav>
       </BorderBox>
       <Flex flexDirection="column" sx={{ width: 'calc(100% - 480px)' }}>
-        {!isLoadingBin &&
-          !isLoadingComments &&
+        {!isLoadingComments &&
           bin?.files.map((file) => (
             <Box key={file.id} mb={4} id={file.id}>
               <FileReview

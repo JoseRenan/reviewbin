@@ -44,18 +44,15 @@ const CodeComment = ({
 export const CommentsTab = ({
   comments,
   bin,
-  isLoadingBin,
   isLoadingComments,
 }: {
   bin: Bin
   comments: FileComments
-  isLoadingBin: boolean
   isLoadingComments: boolean
 }) => {
   return (
     <>
-      {!isLoadingBin &&
-        !isLoadingComments &&
+      {!isLoadingComments &&
         bin?.files.map((file) => (
           <CodeComment
             file={file}

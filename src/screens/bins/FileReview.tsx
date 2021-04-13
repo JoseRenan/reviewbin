@@ -7,6 +7,7 @@ import {
   Timeline,
 } from '@primer/components'
 import { useEffect, useState } from 'react'
+import { binsRef } from '../../api/bins/binsController'
 import CodeViewer from '../../components/code-viewer'
 import { CodeLineWrapper } from '../../components/code-viewer/CodeViewer'
 import CommentInput from '../../components/comment-input'
@@ -118,11 +119,10 @@ export const FileReview = ({
   file: BinFile
   comments: { [line: number]: ReviewComment[] }
 }) => {
-  const { data: fileCode } = useFileQuery(file.url)
   return (
     <Box width="100%" sx={{ maxWidth: 'inherit' }}>
       <CodeViewer
-        code={fileCode ?? ''}
+        code={file.code || ''}
         fileName={file.name}
         langName={file.lang.name}
         lineWrapper={(props) => (
