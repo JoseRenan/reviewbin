@@ -1,7 +1,7 @@
 import { Box, Heading, StyledOcticon, TabNav, Text } from '@primer/components'
 import { CodeSquareIcon, CommentDiscussionIcon } from '@primer/octicons-react'
 import { useRouter } from 'next/dist/client/router'
-import { useBinQuery, useCommentsQuery } from '../../hooks/queries'
+import { useCommentsQuery } from '../../hooks/queries'
 import { MainLayout } from '../MainLayout'
 import { Bin, FilesTab } from './FilesTab'
 import { CommentsTab } from './CommentsTab'
@@ -31,13 +31,7 @@ export const BinPage = ({ bin }: { bin: Bin }) => {
             selected={tab !== 'files'}
             style={{ cursor: 'pointer' }}
             onClick={() =>
-              router.push(
-                { query: { tab: 'conversation', id: binId } },
-                undefined,
-                {
-                  shallow: true,
-                }
-              )
+              router.push({ query: { tab: 'conversation', id: binId } })
             }>
             <StyledOcticon icon={CommentDiscussionIcon} mr={2} size={16} />
             Comentários
@@ -45,11 +39,7 @@ export const BinPage = ({ bin }: { bin: Bin }) => {
           <TabNav.Link
             selected={tab === 'files'}
             style={{ cursor: 'pointer' }}
-            onClick={() =>
-              router.push({ query: { tab: 'files', id: binId } }, undefined, {
-                shallow: true,
-              })
-            }>
+            onClick={() => router.push({ query: { tab: 'files', id: binId } })}>
             <StyledOcticon icon={CodeSquareIcon} mr={2} size={16} />
             Arquivos
           </TabNav.Link>
@@ -62,13 +52,11 @@ export const BinPage = ({ bin }: { bin: Bin }) => {
           />
         )}
         {tab !== 'files' && (
-          <div>
-            <CommentsTab
-              bin={bin!}
-              comments={comments!}
-              isLoadingComments={isLoadingComments}
-            />
-          </div>
+          <CommentsTab
+            bin={bin!}
+            comments={comments!}
+            isLoadingComments={isLoadingComments}
+          />
         )}
       </Box>
     </MainLayout>

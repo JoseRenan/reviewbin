@@ -1,19 +1,10 @@
-import {
-  Avatar,
-  BorderBox,
-  Box,
-  Flex,
-  Text,
-  Timeline,
-} from '@primer/components'
+import { Avatar, BorderBox, Box, Text, Timeline } from '@primer/components'
 import { useEffect, useState } from 'react'
-import { binsRef } from '../../api/bins/binsController'
 import CodeViewer from '../../components/code-viewer'
 import { CodeLineWrapper } from '../../components/code-viewer/CodeViewer'
 import CommentInput from '../../components/comment-input'
 import { LineWrapperProps } from '../../components/highlight/Highlight'
 import { useAddCommentMutation } from '../../hooks/mutations'
-import { useFileQuery } from '../../hooks/queries'
 import { BinFile, ReviewComment } from './FilesTab'
 
 export const CommentArea = ({
@@ -55,6 +46,16 @@ export const CommentArea = ({
       codeLine={codeLine}
       onPlusClick={() => setShowComment(true)}>
       <Box
+        hidden={!showComment}
+        as="td"
+        sx={{
+          borderTop: 'solid 1px',
+          borderBottom: 'solid 1px',
+          borderColor: 'gray.2',
+        }}
+      />
+      <Box
+        as="td"
         p={2}
         hidden={!showComment}
         sx={{

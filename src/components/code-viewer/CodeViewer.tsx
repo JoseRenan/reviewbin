@@ -72,9 +72,7 @@ export const CodeLineWrapper = ({
           <Text fontFamily="mono">{codeLine}</Text>
         </td>
       </tr>
-      <tr>
-        <td colSpan={2}>{children}</td>
-      </tr>
+      <tr>{children}</tr>
     </>
   )
 }

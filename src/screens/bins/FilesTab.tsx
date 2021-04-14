@@ -82,8 +82,7 @@ export const FilesTab = ({
         </SideNav>
       </BorderBox>
       <Flex flexDirection="column" sx={{ width: 'calc(100% - 480px)' }}>
-        {!isLoadingComments &&
-          bin?.files.map((file) => (
+        {bin?.files.map((file) => (
             <Box key={file.id} mb={4} id={file.id}>
               <FileReview
                 binId={bin.id}
