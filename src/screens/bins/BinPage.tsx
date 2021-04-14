@@ -20,10 +20,10 @@ export const BinPage = ({ bin }: { bin: Bin }) => {
     <MainLayout>
       <Box mx={200} my={4}>
         <Heading fontSize={5} mb={2} fontWeight="normal">
-          Testeee
+          {bin.name}
         </Heading>
         <Text fontSize={1} color="text.gray">
-          Criado por <Text fontWeight="bold">anonymous</Text> em{' '}
+          Criado por <Text fontWeight="bold">{bin.author}</Text> em{' '}
           <Text fontWeight="bold">19/03/2021</Text>
         </Text>
         <TabNav my={4}>

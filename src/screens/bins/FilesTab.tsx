@@ -32,6 +32,7 @@ export interface FileComments {
 
 export interface Bin {
   id: string
+  name: string
   author: string
   files: BinFile[]
 }
@@ -60,7 +61,7 @@ export const FilesTab = ({
           mb={2}
           pb={1}>
           <Heading as="h5" fontSize={1} color="text.secondary">
-            Files
+            Arquivos
           </Heading>
         </BorderBox>
         <SideNav variant="lightweight">
@@ -83,14 +84,14 @@ export const FilesTab = ({
       </BorderBox>
       <Flex flexDirection="column" sx={{ width: 'calc(100% - 480px)' }}>
         {bin?.files.map((file) => (
-            <Box key={file.id} mb={4} id={file.id}>
-              <FileReview
-                binId={bin.id}
-                file={file}
-                comments={comments?.[file.id] ?? []}
-              />
-            </Box>
-          ))}
+          <Box key={file.id} mb={4} id={file.id}>
+            <FileReview
+              binId={bin.id}
+              file={file}
+              comments={comments?.[file.id] ?? []}
+            />
+          </Box>
+        ))}
       </Flex>
     </Flex>
   )

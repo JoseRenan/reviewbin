@@ -135,6 +135,8 @@ export const uploadBinZip = async (
   const bin = {
     id: ref.id,
     files: files.filter((file) => file !== undefined),
+    name: req.body.name,
+    author: req.body.author,
   }
 
   await ref.set(bin).catch((e) => {
