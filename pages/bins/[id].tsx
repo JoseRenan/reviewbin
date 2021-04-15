@@ -28,6 +28,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   })
 
   bin.files = await Promise.all(files)
+  bin.timestamp = bin.timestamp.toMillis()
 
   return { props: { bin } }
 }

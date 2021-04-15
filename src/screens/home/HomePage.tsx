@@ -1,5 +1,3 @@
-import Head from 'next/head'
-
 import {
   BorderBox,
   Box,
@@ -25,7 +23,7 @@ import { MainLayout } from '../MainLayout'
 
 export const Navbar = () => (
   <Header px={5}>
-    <Header.Link fontSize={2}>
+    <Header.Link href="/" fontSize={2}>
       <span>ReviewBin</span>
     </Header.Link>
     <Header.Item full ml={3}>
@@ -43,9 +41,11 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
   const [file, setFile] = useState<File | null>()
   const [code, setCode] = useState('// Cole seu código aqui')
   const [anonymousReview, setAnonymousReview] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setLoading(true)
     if (file) {
       return handleSubmitFile()
     }
@@ -66,6 +66,7 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
 
   const handleSubmitFile = async () => {
     const formData = new FormData()
+    setLoading(true)
     if (file) {
       formData.append('file', file as Blob)
       formData.append('name', name)
@@ -81,6 +82,7 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
   return (
     <form onSubmit={handleSubmit}>
       <TextInput
+        disabled={loading}
         width={300}
         mr={2}
         placeholder="Nome do bin"
@@ -89,6 +91,7 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
       <Flex alignItems="center" my={3}>
         <Text>Faça upload de um .zip ou cole seu código abaixo</Text>
         <TextInput
+          disabled={loading}
           ml={2}
           type="file"
           onChange={(e) => setFile(e.target.files?.item(0))}
@@ -124,7 +127,14 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
             />
           </CheckboxLabel>
         </Tooltip>
-        <ButtonPrimary type="submit">Criar bin</ButtonPrimary>
+        <ButtonPrimary
+          className={loading ? 'loading' : ''}
+          disabled={loading}
+          type="submit"
+          sx={{ position: 'relative' }}>
+          {!loading && <Text>Criar bin</Text>}
+          <Box className="spinner" />
+        </ButtonPrimary>
       </Flex>
     </form>
   )

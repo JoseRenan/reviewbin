@@ -6,6 +6,7 @@ import '../src/styles/globals.css'
 import 'nprogress/nprogress.css'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import NProgress from 'nprogress'
+import './styles.css'
 
 NProgress.configure({
   minimum: 0.3,

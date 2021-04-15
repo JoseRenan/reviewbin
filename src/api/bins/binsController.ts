@@ -1,7 +1,7 @@
 import uniqid from 'uniqid'
 import AdmZip from 'adm-zip'
 import multer from 'multer'
-import { bucket, firestore } from '../firebaseAdmin'
+import admin, { bucket, firestore } from '../firebaseAdmin'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import initMiddleware from '../initMiddleware'
 
@@ -62,6 +62,7 @@ export const createBin = async (req: NextApiRequest, res: NextApiResponse) => {
     id: ref.id,
     name: body.name,
     author: body.author,
+    timestamp: admin.firestore.FieldValue.serverTimestamp(),
     files: [
       {
         id: uniqid(),
@@ -135,6 +136,7 @@ export const uploadBinZip = async (
   const bin = {
     id: ref.id,
     files: files.filter((file) => file !== undefined),
+    timestamp: admin.firestore.FieldValue.serverTimestamp(),
     name: req.body.name,
     author: req.body.author,
   }
@@ -146,7 +148,7 @@ export const uploadBinZip = async (
     })
   })
 
-  res.status(201).json(bin)
+  res.status(201).json({ ...bin, timestamp: undefined })
 }
 
 export const getBin = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -157,6 +159,9 @@ export const getBin = async (req: NextApiRequest, res: NextApiResponse) => {
       message: "This bin doesn't exists",
     })
   } else {
-    res.status(200).json(bin.data())
+    res.status(200).json({
+      ...bin.data(),
+      timestamp: bin.data()?.timestamp.toMillis(),
+    })
   }
 }

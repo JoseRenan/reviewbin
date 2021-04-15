@@ -2,6 +2,7 @@ import {
   Avatar,
   Box,
   Flex,
+  Link,
   PointerBox,
   StyledOcticon,
   TextInput,
@@ -9,14 +10,14 @@ import {
 } from '@primer/components'
 import Text from '@primer/components/lib/Text'
 import { EyeIcon } from '@primer/octicons-react'
+import { useRouter } from 'next/router'
 import { FormEvent, useState } from 'react'
-import { Button, ButtonPrimary } from '../../components/buttons'
+import { ButtonPrimary } from '../../components/buttons'
 import CodeViewer from '../../components/code-viewer'
-import CommentInput from '../../components/comment-input'
 import { useAddCommentMutation } from '../../hooks/mutations'
 import { useCommentsQuery } from '../../hooks/queries'
 import { CommentArea } from './FileReview'
-import { FileComments, Bin, BinFile, ReviewComment } from './FilesTab'
+import { Bin, BinFile, ReviewComment } from './FilesTab'
 
 const CodeComment = ({
   file,
@@ -75,6 +76,7 @@ export const CommentsTab = ({ bin }: { bin: Bin }) => {
     bin.id
   )
 
+  const router = useRouter()
   const addComment = useAddCommentMutation(bin.id)
   const [newComment, setNewComment] = useState<string>('')
 
@@ -89,6 +91,19 @@ export const CommentsTab = ({ bin }: { bin: Bin }) => {
 
   return (
     <>
+      {comments?.length === 0 && (
+        <Text>
+          Não há comentários a serem exibidos, adicione abaixo ou clique na tab{' '}
+          <Link
+            href="#"
+            onClick={() =>
+              router.push({ query: { tab: 'files', id: bin.id } })
+            }>
+            Arquivos
+          </Link>{' '}
+          para adicionar comentário no código
+        </Text>
+      )}
       <Timeline>
         {!isLoadingComments &&
           comments?.map((comment) => {

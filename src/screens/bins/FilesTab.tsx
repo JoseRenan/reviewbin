@@ -36,6 +36,7 @@ export interface Bin {
   name: string
   author: string
   files: BinFile[]
+  timestamp?: number
 }
 
 export const FilesTab = ({ bin }: { bin: Bin }) => {
