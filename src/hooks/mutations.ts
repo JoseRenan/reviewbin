@@ -24,6 +24,31 @@ export const useAddFileReviewMutation = (binId: string) => {
         old[comment.fileId][comment.lineNumber].push(comment.comment)
         return old
       })
+      queryClient.setQueryData<Array<FileThread | Comment>>(
+        ['comments', binId],
+        (old) => {
+          if (!old) old = []
+          const threadIndex = old.findIndex(
+            (thread) =>
+              thread.type === 'file' &&
+              thread.fileId === comment.fileId &&
+              +thread.lineNumber === comment.lineNumber
+          )
+          if (threadIndex === -1) {
+            old.push({
+              comments: { [comment.lineNumber]: [comment.comment] },
+              type: 'file',
+              fileId: comment.fileId,
+              lineNumber: `${comment.lineNumber}`,
+            })
+          } else {
+            ;(old[threadIndex] as FileThread).comments[comment.lineNumber].push(
+              comment.comment
+            )
+          }
+          return old
+        }
+      )
 
       const response = await fetch(`/api/bins/${binId}/reviews`, {
         method: 'POST',

@@ -1,5 +1,14 @@
-import { Avatar, Box, Flex, PointerBox, TextInput } from '@primer/components'
+import {
+  Avatar,
+  Box,
+  Flex,
+  PointerBox,
+  StyledOcticon,
+  TextInput,
+  Timeline,
+} from '@primer/components'
 import Text from '@primer/components/lib/Text'
+import { EyeIcon } from '@primer/octicons-react'
 import { FormEvent, useState } from 'react'
 import { Button, ButtonPrimary } from '../../components/buttons'
 import CodeViewer from '../../components/code-viewer'
@@ -22,7 +31,7 @@ const CodeComment = ({
     <>
       {comments &&
         Object.keys(comments).map((lineNumber) => (
-          <Box width="100%" mb={4} key={lineNumber}>
+          <Box width="100%" key={lineNumber}>
             <CodeViewer
               onlyLine={+lineNumber}
               code={file.code ?? ''}
@@ -50,7 +59,7 @@ export interface FileThread {
   comments: {
     [lineNumber: string]: Array<ReviewComment>
   }
-  timestamp: number
+  timestamp?: number
 }
 
 export interface Comment {
@@ -80,72 +89,96 @@ export const CommentsTab = ({ bin }: { bin: Bin }) => {
 
   return (
     <>
-      {!isLoadingComments &&
-        comments?.map((comment) => {
-          if (comment.type === 'file') {
-            const file = bin.files.find((f) => f.id === comment.fileId)
-            return (
-              <CodeComment
-                key={`${comment.fileId}-${comment.lineNumber}`}
-                file={file!}
-                comments={comment.comments}
-                binId={bin.id}
-              />
-            )
-          } else {
-            return (
-              <Flex width="100%">
-                <Avatar
-                  size={28}
-                  src="https://avatars.githubusercontent.com/primer"
-                />
-                <PointerBox
-                  width="100%"
-                  ml={3}
-                  mb={4}
-                  bg="gray.1"
-                  borderColor="gray.3"
-                  caret="left-top">
-                  <Box px={3} py={2}>
-                    <Text fontSize={1}>
-                      <Text fontWeight="bold" color="gray.8">
-                        {comment.author}
-                      </Text>{' '}
-                      comentou em{' '}
-                      {comment.timestamp
-                        ? new Date(comment.timestamp).toLocaleDateString()
-                        : 'pouco tempo atrás'}
-                    </Text>
+      <Timeline>
+        {!isLoadingComments &&
+          comments?.map((comment) => {
+            if (comment.type === 'file') {
+              const file = bin.files.find((f) => f.id === comment.fileId)
+              return (
+                <Timeline.Item key={`${comment.fileId}-${comment.lineNumber}`}>
+                  <Timeline.Badge>
+                    <StyledOcticon icon={EyeIcon} />
+                  </Timeline.Badge>
+                  <Box width="100%">
+                    <CodeComment
+                      file={file!}
+                      comments={comment.comments}
+                      binId={bin.id}
+                    />
                   </Box>
-                  <Box bg="white" sx={{ borderRadius: 5 }} p={3}>
-                    {comment.content}
-                  </Box>
-                </PointerBox>
-              </Flex>
-            )
-          }
-        })}
-      <PointerBox
-        mt={2}
-        p={2}
-        bg="gray.1"
-        borderColor="gray.3"
-        caret="left-top">
-        <form onSubmit={handleSubmit}>
-          <TextInput
-            as="textarea"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            backgroundColor="white"
+                </Timeline.Item>
+              )
+            } else {
+              return (
+                <Timeline.Item key={comment.id}>
+                  <Timeline.Badge>
+                    <Avatar
+                      size={28}
+                      src="https://avatars.githubusercontent.com/primer"
+                    />
+                  </Timeline.Badge>
+                  <Flex width="100%">
+                    <PointerBox
+                      width="100%"
+                      ml={3}
+                      mb={4}
+                      bg="gray.1"
+                      borderColor="gray.3"
+                      caret="left-top">
+                      <Box px={3} py={2}>
+                        <Text fontSize={1}>
+                          <Text fontWeight="bold" color="gray.8">
+                            {comment.author}
+                          </Text>{' '}
+                          comentou em{' '}
+                          {comment.timestamp
+                            ? new Date(comment.timestamp).toLocaleDateString()
+                            : 'pouco tempo atrás'}
+                        </Text>
+                      </Box>
+                      <Box bg="white" sx={{ borderRadius: 5 }} p={3}>
+                        {comment.content}
+                      </Box>
+                    </PointerBox>
+                  </Flex>
+                </Timeline.Item>
+              )
+            }
+          })}
+        <Timeline.Item>
+          <Timeline.Badge>
+            <Avatar
+              size={28}
+              src="https://avatars.githubusercontent.com/primer"
+            />
+          </Timeline.Badge>
+          <PointerBox
             width="100%"
-            placeholder="Adicionar comentário..."
-            sx={{ minHeight: 150 }}
-          />
-          <Flex my={2} justifyContent="end">
-            <ButtonPrimary type="submit">Adicionar comentário</ButtonPrimary>
-          </Flex>
-        </form>
-      </PointerBox>
+            p={2}
+            ml={3}
+            mb={4}
+            bg="gray.1"
+            borderColor="gray.3"
+            caret="left-top">
+            <form onSubmit={handleSubmit}>
+              <TextInput
+                as="textarea"
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                backgroundColor="white"
+                width="100%"
+                placeholder="Adicionar comentário..."
+                sx={{ minHeight: 150 }}
+              />
+              <Flex my={2} justifyContent="end">
+                <ButtonPrimary type="submit">
+                  Adicionar comentário
+                </ButtonPrimary>
+              </Flex>
+            </form>
+          </PointerBox>
+        </Timeline.Item>
+      </Timeline>
     </>
   )
 }
