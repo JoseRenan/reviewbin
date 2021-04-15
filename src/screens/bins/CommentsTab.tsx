@@ -37,26 +37,50 @@ const CodeComment = ({
   )
 }
 
+interface FileThread {
+  fileId: string
+  lineNumber: string
+  type: 'file'
+  comments: {
+    [lineNumber: string]: Array<ReviewComment>
+  }
+  timestamp: number
+}
+
+interface Comment {
+  type: 'comment'
+  author: string
+  content: string
+  timestamp: number
+  id: string
+}
+
 export const CommentsTab = ({
   comments,
   bin,
   isLoadingComments,
 }: {
   bin: Bin
-  comments: FileComments
+  comments: Array<FileThread | Comment>
   isLoadingComments: boolean
 }) => {
   return (
     <>
       {!isLoadingComments &&
-        bin?.files.map((file) => (
-          <CodeComment
-            key={file.id}
-            file={file}
-            comments={comments[file.id]}
-            binId={bin.id}
-          />
-        ))}
+        comments.map((comment) => {
+          if (comment.type === 'file') {
+            const fileThread = (comment as unknown) as FileThread
+            const file = bin.files.find((f) => f.id === fileThread.fileId)
+            return (
+              <CodeComment
+                key={`${fileThread.fileId}-${fileThread.lineNumber}`}
+                file={file!}
+                comments={fileThread.comments}
+                binId={bin.id}
+              />
+            )
+          }
+        })}
     </>
   )
 }

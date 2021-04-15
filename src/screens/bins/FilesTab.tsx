@@ -40,11 +40,9 @@ export interface Bin {
 export const FilesTab = ({
   bin,
   comments,
-  isLoadingComments,
 }: {
   bin: Bin
   comments: FileComments
-  isLoadingComments: boolean
 }) => {
   return (
     <Flex>

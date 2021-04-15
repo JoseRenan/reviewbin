@@ -11,11 +11,24 @@ export const useFileQuery = (fileUrl: string) =>
     return response.text()
   })
 
-export const useCommentsQuery = (binId: string) =>
+export const useReviewsQuery = (binId: string) =>
   useQuery<FileComments>(
     ['reviews', binId],
     async () => {
       const response = await fetch(`/api/bins/${binId}/reviews`)
+      if (!response.ok) throw new Error('An error ocurred')
+      return response.json()
+    },
+    {
+      enabled: !!binId,
+    }
+  )
+
+export const useCommentsQuery = (binId: string) =>
+  useQuery<FileComments>(
+    ['comments', binId],
+    async () => {
+      const response = await fetch(`/api/bins/${binId}/comments`)
       if (!response.ok) throw new Error('An error ocurred')
       return response.json()
     },

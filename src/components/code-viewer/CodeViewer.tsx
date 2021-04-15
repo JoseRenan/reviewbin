@@ -1,4 +1,11 @@
-import { Box, BorderBox, Text, Flex, StyledOcticon } from '@primer/components'
+import {
+  Box,
+  BorderBox,
+  Text,
+  Flex,
+  StyledOcticon,
+  Link,
+} from '@primer/components'
 import { FileIcon, PlusIcon } from '@primer/octicons-react'
 import { useState } from 'react'
 import Highlight from '../highlight'

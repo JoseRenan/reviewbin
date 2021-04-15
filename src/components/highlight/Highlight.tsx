@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react'
+import React, { PropsWithChildren } from 'react'
 import { CSSProperties } from 'styled-components'
 
 export type LineWrapperProps = PropsWithChildren<{
@@ -30,7 +30,9 @@ const highlighter = ({
 
   const pushToken = (token: string, style: string | null) => {
     line.push(
-      <span className={style ? prefix + style : ''} key={`token--${++index}`}>
+      <span
+        className={style ? prefix + style : ''}
+        key={`token--${lineNumber}--${++index}`}>
         {token}
       </span>
     )
@@ -40,10 +42,12 @@ const highlighter = ({
     lineNumber++
     if (!onlyLine || (onlyLine && onlyLine === lineNumber)) {
       elements.push(
-        lineWrapper({
-          lineNumber: lineNumber,
-          codeLine: line,
-        })
+        <React.Fragment key={lineNumber}>
+          {lineWrapper({
+            lineNumber: lineNumber,
+            codeLine: line,
+          })}
+        </React.Fragment>
       )
     }
     line = []
