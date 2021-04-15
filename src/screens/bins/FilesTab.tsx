@@ -40,7 +40,7 @@ export interface Bin {
 }
 
 export const FilesTab = ({ bin }: { bin: Bin }) => {
-  const { data: reviews } = useReviewsQuery(bin.id as string)
+  const { data: reviews, isLoading } = useReviewsQuery(bin.id as string)
   return (
     <Flex>
       <BorderBox
@@ -78,15 +78,17 @@ export const FilesTab = ({ bin }: { bin: Bin }) => {
         </SideNav>
       </BorderBox>
       <Flex flexDirection="column" sx={{ width: 'calc(100% - 480px)' }}>
-        {bin?.files.map((file) => (
-          <Box key={file.id} mb={4} id={file.id}>
-            <FileReview
-              binId={bin.id}
-              file={file}
-              comments={reviews?.[file.id] ?? []}
-            />
-          </Box>
-        ))}
+        {isLoading
+          ? 'Carregando...'
+          : bin?.files.map((file) => (
+              <Box key={file.id} mb={4} id={file.id}>
+                <FileReview
+                  binId={bin.id}
+                  file={file}
+                  comments={reviews?.[file.id] ?? []}
+                />
+              </Box>
+            ))}
       </Flex>
     </Flex>
   )
