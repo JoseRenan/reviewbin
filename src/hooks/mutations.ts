@@ -1,8 +1,10 @@
+import { Comment } from './../screens/bins/CommentsTab'
 import { FileComments } from '../screens/bins/FilesTab'
 import { queryClient } from './../../pages/_app'
 import { useMutation } from 'react-query'
+import { FileThread } from '../screens/bins/CommentsTab'
 
-export interface CommentInput {
+export interface FileReviewInput {
   lineNumber: number
   fileId: string
   comment: {
@@ -11,9 +13,9 @@ export interface CommentInput {
   }
 }
 
-export const useAddCommentMutation = (binId: string) => {
+export const useAddFileReviewMutation = (binId: string) => {
   const mutation = useMutation(
-    async (comment: CommentInput) => {
+    async (comment: FileReviewInput) => {
       queryClient.setQueryData<FileComments>(['reviews', binId], (old) => {
         if (!old) old = {}
         if (!old[comment.fileId]) old[comment.fileId] = {}
@@ -34,7 +36,7 @@ export const useAddCommentMutation = (binId: string) => {
       return response.json()
     },
     {
-      onSuccess: (newComment: CommentInput) => {
+      onSuccess: (newComment: FileReviewInput) => {
         queryClient.setQueryData<FileComments>(['reviews', binId], (old) => {
           old![newComment.fileId][newComment.lineNumber] = old![
             newComment.fileId
@@ -43,6 +45,46 @@ export const useAddCommentMutation = (binId: string) => {
           )
           return old!
         })
+      },
+    }
+  )
+
+  return mutation
+}
+
+export const useAddCommentMutation = (binId: string) => {
+  const mutation = useMutation(
+    async (comment: Comment) => {
+      queryClient.setQueryData<Array<FileThread | Comment>>(
+        ['comments', binId],
+        (old) => {
+          if (!old) old = []
+          old.push({ ...comment, type: 'comment' })
+          return old
+        }
+      )
+
+      const response = await fetch(`/api/bins/${binId}/comments`, {
+        method: 'POST',
+        body: JSON.stringify(comment),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      })
+      if (!response.ok) throw new Error('')
+      return response.json()
+    },
+    {
+      onSuccess: (newComment: Comment) => {
+        queryClient.setQueryData<Array<FileThread | Comment>>(
+          ['comments', binId],
+          (old) => {
+            old!.map((comment) =>
+              !(comment as Comment).id ? newComment : comment
+            )
+            return old!
+          }
+        )
       },
     }
   )

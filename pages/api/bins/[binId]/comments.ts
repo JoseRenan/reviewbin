@@ -1,10 +1,16 @@
-import { getCommentList } from './../../../../src/api/reviews/reviewsController'
+import {
+  getCommentList,
+  createComment,
+} from './../../../../src/api/reviews/reviewsController'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case 'GET':
       await getCommentList(req, res)
+      break
+    case 'POST':
+      await createComment(req, res)
       break
     default:
       res.setHeader('Allow', ['POST'])

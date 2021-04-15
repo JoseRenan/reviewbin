@@ -1,7 +1,6 @@
 import { Box, Heading, StyledOcticon, TabNav, Text } from '@primer/components'
 import { CodeSquareIcon, CommentDiscussionIcon } from '@primer/octicons-react'
 import { useRouter } from 'next/dist/client/router'
-import { useCommentsQuery, useReviewsQuery } from '../../hooks/queries'
 import { MainLayout } from '../MainLayout'
 import { Bin, FilesTab } from './FilesTab'
 import { CommentsTab } from './CommentsTab'
@@ -11,12 +10,6 @@ export const BinPage = ({ bin }: { bin: Bin }) => {
     query: { tab, id: binId },
     ...router
   } = useRouter()
-
-  const { data: reviews } = useReviewsQuery(binId as string)
-  const { data: comments, isLoading: isLoadingComments } = useCommentsQuery(
-    binId as string
-  )
-
   return (
     <MainLayout>
       <Box mx={200} my={4}>
@@ -45,14 +38,8 @@ export const BinPage = ({ bin }: { bin: Bin }) => {
             Arquivos
           </TabNav.Link>
         </TabNav>
-        {tab === 'files' && <FilesTab bin={bin!} comments={reviews!} />}
-        {tab !== 'files' && (
-          <CommentsTab
-            bin={bin!}
-            comments={comments!}
-            isLoadingComments={isLoadingComments}
-          />
-        )}
+        {tab === 'files' && <FilesTab bin={bin!} />}
+        {tab !== 'files' && <CommentsTab bin={bin!} />}
       </Box>
     </MainLayout>
   )

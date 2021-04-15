@@ -7,6 +7,7 @@ import {
   Text,
 } from '@primer/components'
 import { Language } from '../../components/select-language/SelectLanguage'
+import { useReviewsQuery } from '../../hooks/queries'
 import { FileReview } from './FileReview'
 
 export interface BinFile {
@@ -37,13 +38,8 @@ export interface Bin {
   files: BinFile[]
 }
 
-export const FilesTab = ({
-  bin,
-  comments,
-}: {
-  bin: Bin
-  comments: FileComments
-}) => {
+export const FilesTab = ({ bin }: { bin: Bin }) => {
+  const { data: reviews } = useReviewsQuery(bin.id as string)
   return (
     <Flex>
       <BorderBox
@@ -86,7 +82,7 @@ export const FilesTab = ({
             <FileReview
               binId={bin.id}
               file={file}
-              comments={comments?.[file.id] ?? []}
+              comments={reviews?.[file.id] ?? []}
             />
           </Box>
         ))}

@@ -1,4 +1,5 @@
 import { Bin, FileComments } from '../screens/bins/FilesTab'
+import { FileThread, Comment } from '../screens/bins/CommentsTab'
 import { storage } from './../screens/firebaseClient'
 import { useQuery } from 'react-query'
 
@@ -25,7 +26,7 @@ export const useReviewsQuery = (binId: string) =>
   )
 
 export const useCommentsQuery = (binId: string) =>
-  useQuery<FileComments>(
+  useQuery<Array<FileThread | Comment>>(
     ['comments', binId],
     async () => {
       const response = await fetch(`/api/bins/${binId}/comments`)

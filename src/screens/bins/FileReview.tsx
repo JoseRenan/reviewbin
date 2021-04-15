@@ -4,7 +4,7 @@ import CodeViewer from '../../components/code-viewer'
 import { CodeLineWrapper } from '../../components/code-viewer/CodeViewer'
 import CommentInput from '../../components/comment-input'
 import { LineWrapperProps } from '../../components/highlight/Highlight'
-import { useAddCommentMutation } from '../../hooks/mutations'
+import { useAddFileReviewMutation } from '../../hooks/mutations'
 import { BinFile, ReviewComment } from './FilesTab'
 
 export const CommentArea = ({
@@ -20,7 +20,7 @@ export const CommentArea = ({
 }) => {
   const [showComment, setShowComment] = useState(false)
   const [comment, setComment] = useState('')
-  const addComment = useAddCommentMutation(binId)
+  const addComment = useAddFileReviewMutation(binId)
 
   useEffect(() => {
     if (!showComment && comments.length > 0) {

@@ -52,14 +52,15 @@ export const createComment = async (
       .child('comments')
 
     const newReview = await binReviewRef.push({
-      author: body.comment.author,
-      content: body.comment.content,
+      author: body.author,
+      content: body.content,
       timestamp: admin.database.ServerValue.TIMESTAMP,
     })
 
     res.status(201).json({
+      author: body.author,
+      content: body.content,
       id: newReview.key,
-      comment: { ...body.comment, id: newReview.key },
     })
   }
 }

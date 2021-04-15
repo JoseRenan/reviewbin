@@ -19,15 +19,30 @@ const CommentInput = ({
   return (
     <>
       {open ? (
-        <TextInput
-          as="textarea"
-          backgroundColor="white"
-          width="100%"
-          placeholder="Adicionar comentário..."
-          value={value}
-          onChange={onChange}
-          sx={{ minHeight: 150 }}
-        />
+        <>
+          <TextInput
+            as="textarea"
+            backgroundColor="white"
+            width="100%"
+            placeholder="Adicionar comentário..."
+            value={value}
+            onChange={onChange}
+            sx={{ minHeight: 150 }}
+          />
+          <Flex my={2} justifyContent="end">
+            <Button
+              mr={2}
+              onClick={() => {
+                setOpen(false)
+                onCancel?.()
+              }}>
+              Cancelar
+            </Button>
+            <ButtonPrimary onClick={onAddComment}>
+              Adicionar comentário
+            </ButtonPrimary>
+          </Flex>
+        </>
       ) : (
         <Flex alignItems="center">
           <Avatar
@@ -41,21 +56,6 @@ const CommentInput = ({
             placeholder="Adicionar comentário..."
             onClick={() => setOpen(true)}
           />
-        </Flex>
-      )}
-      {open && (
-        <Flex my={2} justifyContent="end">
-          <Button
-            mr={2}
-            onClick={() => {
-              setOpen(false)
-              onCancel?.()
-            }}>
-            Cancelar
-          </Button>
-          <ButtonPrimary onClick={onAddComment}>
-            Adicionar comentário
-          </ButtonPrimary>
         </Flex>
       )}
     </>
