@@ -1,5 +1,6 @@
 import {
   Box,
+  Flash,
   Flex,
   Heading,
   StyledOcticon,
@@ -19,12 +20,14 @@ import { Bin, FilesTab } from './FilesTab'
 import { CommentsTab } from './CommentsTab'
 import { Button } from '../../components/buttons'
 import { useState } from 'react'
+import { useAuth } from '../../hooks/useGoogleAuth'
 
 export const BinPage = ({ bin }: { bin: Bin }) => {
   const {
     query: { tab, id: binId },
     ...router
   } = useRouter()
+  const { auth: user } = useAuth()
   const [copied, setCopied] = useState(false)
   const { safeSetTimeout } = useSafeTimeout()
   return (
@@ -68,6 +71,13 @@ export const BinPage = ({ bin }: { bin: Bin }) => {
             )}
           </Text>
         </Text>
+        {!user && (
+          <Flash mt={3} sx={{ width: '100%' }} variant="warning">
+            Você está revisando este bin como usuário anônimo, caso queira se
+            identificar, faça login no botão "Entre ou cadastre-se" na barra
+            superior
+          </Flash>
+        )}
         <TabNav my={4}>
           <TabNav.Link
             selected={tab !== 'files'}

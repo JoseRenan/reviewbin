@@ -5,7 +5,7 @@ export interface Auth {
   uid?: string
   email?: string | null
   name: string | null
-  photoUrl: string | null
+  photoUrl?: string | null
 }
 
 interface AuthContextValue {
@@ -68,6 +68,7 @@ export function useProvideAuth() {
     setLoading(true)
     return firebaseAuth
       .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+      .then(() => console.log('Successfully logged in'))
       .catch((e) => console.log(e))
   }
 

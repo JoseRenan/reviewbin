@@ -76,7 +76,13 @@ export const CommentArea = ({
                 {comments.map((c) => (
                   <Timeline.Item key={`comment--${c.id}`}>
                     <Timeline.Badge>
-                      <Avatar size={28} src={c.author.photoUrl ?? ''} />
+                      <Avatar
+                        size={28}
+                        src={
+                          c.author.photoUrl ??
+                          'https://avatars.githubusercontent.com/primer'
+                        }
+                      />
                     </Timeline.Badge>
                     <Timeline.Body>
                       <Text fontWeight="bold" color="gray.8">

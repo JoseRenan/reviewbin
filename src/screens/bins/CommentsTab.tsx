@@ -1,6 +1,7 @@
 import {
   Avatar,
   Box,
+  Flash,
   Flex,
   Link,
   PointerBox,
@@ -87,7 +88,6 @@ export const CommentsTab = ({ bin }: { bin: Bin }) => {
     addComment.mutateAsync({
       author: user ?? {
         name: 'anonymous',
-        photoUrl: 'https://avatars.githubusercontent.com/primer',
       },
       content: newComment,
     })
@@ -97,17 +97,21 @@ export const CommentsTab = ({ bin }: { bin: Bin }) => {
   return (
     <>
       {comments?.length === 0 && (
-        <Text>
-          Não há comentários a serem exibidos, adicione abaixo ou clique na tab{' '}
-          <Link
-            href="#"
-            onClick={() =>
-              router.push({ query: { tab: 'files', id: bin.id } })
-            }>
-            Arquivos
-          </Link>{' '}
-          para adicionar comentário no código
-        </Text>
+        <Flash>
+          <Text>
+            Não há comentários a serem exibidos, adicione algum abaixo ou clique
+            na tab{' '}
+            <Link
+              href="#"
+              onClick={() =>
+                router.push({ query: { tab: 'files', id: bin.id } })
+              }>
+              Arquivos
+            </Link>{' '}
+            para revisar o código e adicionar comentários diretamente nos
+            arquivos
+          </Text>
+        </Flash>
       )}
       <Timeline>
         {!isLoadingComments &&
@@ -132,7 +136,13 @@ export const CommentsTab = ({ bin }: { bin: Bin }) => {
               return (
                 <Timeline.Item key={comment.id}>
                   <Timeline.Badge>
-                    <Avatar size={28} src={comment.author.photoUrl ?? ''} />
+                    <Avatar
+                      size={28}
+                      src={
+                        comment.author.photoUrl ??
+                        'https://avatars.githubusercontent.com/primer'
+                      }
+                    />
                   </Timeline.Badge>
                   <Flex width="100%">
                     <PointerBox

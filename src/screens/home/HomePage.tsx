@@ -1,18 +1,17 @@
 import {
   BorderBox,
   Box,
+  Flash,
   Flex,
   Header,
   Heading,
   Text,
   TextInput,
-  Tooltip,
 } from '@primer/components'
 import SelectLanguage from '../../components/select-language'
 import CodeEditor from '../../components/code-editor'
 import { FormEvent, useState } from 'react'
 import { ButtonPrimary, HeaderButton } from '../../components/buttons'
-import CheckboxLabel from '../../components/checkbox-label'
 import {
   Language,
   LANGUAGES,
@@ -66,7 +65,6 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
         anonymousReview,
         author: user ?? {
           name: 'anonymous',
-          photoUrl: 'https://avatars.githubusercontent.com/primer',
         },
         files: [{ lang, code, filename: 'main' }],
       }),
@@ -84,11 +82,8 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
       formData.append('file', file as Blob)
       formData.append('name', name)
       formData.append('author.name', user?.name ?? 'anonymous')
-      formData.append(
-        'author.photoUrl',
-        user?.photoUrl ?? 'https://avatars.githubusercontent.com/primer'
-      )
       if (user) {
+        formData.append('author.photoUrl', user?.photoUrl ?? '')
         formData.append('author.uid', user.uid ?? '')
         formData.append('author.email', user.email ?? '')
       }
@@ -135,21 +130,16 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
           </BorderBox>
         </>
       )}
-      <Flex justifyContent="space-between">
-        <Tooltip aria-label="Você precisa se cadastrar para desabilitar essa opção">
-          <CheckboxLabel
-            label="Permitir revisão por usuários não cadastrados"
-            htmlFor="not-registered-users">
-            <input
-              id="not-registered-users"
-              type="checkbox"
-              checked={anonymousReview}
-              onChange={(e) => setAnonymousReview(e.target.checked)}
-              disabled
-            />
-          </CheckboxLabel>
-        </Tooltip>
+      <Flex mt={3} justifyContent="flex-end">
+        {!user && (
+          <Flash sx={{ width: '100%' }} variant="warning">
+            Você está criando um bin como usuário anônimo, caso queira se
+            identificar, faça login no botão "Entre ou cadastre-se" na barra
+            superior
+          </Flash>
+        )}
         <ButtonPrimary
+          ml={3}
           className={loading ? 'loading' : ''}
           disabled={loading}
           type="submit"
