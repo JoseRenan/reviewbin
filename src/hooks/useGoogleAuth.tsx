@@ -68,7 +68,7 @@ export function useProvideAuth() {
     setLoading(true)
     return firebaseAuth
       .signInWithPopup(new firebase.auth.GoogleAuthProvider())
-      .then(() => console.log('opa'))
+      .catch((e) => console.log(e))
   }
 
   /**

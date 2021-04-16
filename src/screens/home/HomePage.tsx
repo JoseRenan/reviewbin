@@ -115,6 +115,7 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
           disabled={loading}
           ml={2}
           type="file"
+          accept=".zip"
           onChange={(e) => setFile(e.target.files?.item(0))}
         />
       </Flex>

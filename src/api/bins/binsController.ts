@@ -132,6 +132,10 @@ export const uploadBinZip = async (
   })
 
   const files = await Promise.all(promises)
+  const author = {
+    name: req.body['author.name'],
+    photoUrl: req.body['author.photoUrl'],
+  }
 
   const bin = {
     id: ref.id,
@@ -139,10 +143,13 @@ export const uploadBinZip = async (
     timestamp: admin.firestore.FieldValue.serverTimestamp(),
     name: req.body.name,
     author: {
-      name: req.body['author.name'],
-      photoUrl: req.body['author.photoUrl'],
-      email: req.body['author.email'],
-      uid: req.body['author.uid'],
+      ...author,
+      ...(req.body['author.email'] && req.body['author.uid']
+        ? {
+            email: req.body['author.email'],
+            uid: req.body['author.uid'],
+          }
+        : {}),
     },
   }
 
