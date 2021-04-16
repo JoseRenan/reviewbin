@@ -16,6 +16,7 @@ import { ButtonPrimary } from '../../components/buttons'
 import CodeViewer from '../../components/code-viewer'
 import { useAddCommentMutation } from '../../hooks/mutations'
 import { useCommentsQuery } from '../../hooks/queries'
+import { useAuth, Auth } from '../../hooks/useGoogleAuth'
 import { CommentArea } from './FileReview'
 import { Bin, BinFile, ReviewComment } from './FilesTab'
 
@@ -65,7 +66,7 @@ export interface FileThread {
 
 export interface Comment {
   type?: 'comment'
-  author: string
+  author: Auth
   content: string
   timestamp?: number
   id?: string
@@ -76,6 +77,7 @@ export const CommentsTab = ({ bin }: { bin: Bin }) => {
     bin.id
   )
 
+  const { auth: user } = useAuth()
   const router = useRouter()
   const addComment = useAddCommentMutation(bin.id)
   const [newComment, setNewComment] = useState<string>('')
@@ -83,7 +85,10 @@ export const CommentsTab = ({ bin }: { bin: Bin }) => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     addComment.mutateAsync({
-      author: 'anonymous',
+      author: user ?? {
+        name: 'anonymous',
+        photoUrl: 'https://avatars.githubusercontent.com/primer',
+      },
       content: newComment,
     })
     setNewComment('')
@@ -127,10 +132,7 @@ export const CommentsTab = ({ bin }: { bin: Bin }) => {
               return (
                 <Timeline.Item key={comment.id}>
                   <Timeline.Badge>
-                    <Avatar
-                      size={28}
-                      src="https://avatars.githubusercontent.com/primer"
-                    />
+                    <Avatar size={28} src={comment.author.photoUrl ?? ''} />
                   </Timeline.Badge>
                   <Flex width="100%">
                     <PointerBox
@@ -143,7 +145,7 @@ export const CommentsTab = ({ bin }: { bin: Bin }) => {
                       <Box px={3} py={2}>
                         <Text fontSize={1}>
                           <Text fontWeight="bold" color="gray.8">
-                            {comment.author}
+                            {comment.author.name}
                           </Text>{' '}
                           comentou em{' '}
                           {comment.timestamp
@@ -164,7 +166,9 @@ export const CommentsTab = ({ bin }: { bin: Bin }) => {
           <Timeline.Badge>
             <Avatar
               size={28}
-              src="https://avatars.githubusercontent.com/primer"
+              src={
+                user?.photoUrl ?? 'https://avatars.githubusercontent.com/primer'
+              }
             />
           </Timeline.Badge>
           <PointerBox

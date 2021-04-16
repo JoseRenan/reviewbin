@@ -7,6 +7,7 @@ import 'nprogress/nprogress.css'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import NProgress from 'nprogress'
 import './styles.css'
+import { AuthProvider } from '../src/hooks/useGoogleAuth'
 
 NProgress.configure({
   minimum: 0.3,
@@ -27,7 +28,9 @@ export const queryClient = new QueryClient()
 const App = ({ Component, pageProps }: AppProps) => (
   <BaseStyles>
     <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
+      <AuthProvider>
+        <Component {...pageProps} />
+      </AuthProvider>
     </QueryClientProvider>
   </BaseStyles>
 )

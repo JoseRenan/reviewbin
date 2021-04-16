@@ -8,6 +8,7 @@ import {
 } from '@primer/components'
 import { Language } from '../../components/select-language/SelectLanguage'
 import { useReviewsQuery } from '../../hooks/queries'
+import { Auth } from '../../hooks/useGoogleAuth'
 import { FileReview } from './FileReview'
 
 export interface BinFile {
@@ -20,7 +21,7 @@ export interface BinFile {
 
 export interface ReviewComment {
   id?: string
-  author: string
+  author: Auth
   content: string
   timestamp?: number
 }
@@ -34,7 +35,7 @@ export interface FileComments {
 export interface Bin {
   id: string
   name: string
-  author: string
+  author: Auth
   files: BinFile[]
   timestamp?: number
 }

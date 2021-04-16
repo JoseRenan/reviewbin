@@ -138,7 +138,12 @@ export const uploadBinZip = async (
     files: files.filter((file) => file !== undefined),
     timestamp: admin.firestore.FieldValue.serverTimestamp(),
     name: req.body.name,
-    author: req.body.author,
+    author: {
+      name: req.body['author.name'],
+      photoUrl: req.body['author.photoUrl'],
+      email: req.body['author.email'],
+      uid: req.body['author.uid'],
+    },
   }
 
   await ref.set(bin).catch((e) => {

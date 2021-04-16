@@ -8,8 +8,10 @@ const CommentInput = ({
   onAddComment,
   onCancel,
   initialOpen = false,
+  avatarUrl,
 }: {
   initialOpen?: boolean
+  avatarUrl: string
   value: string
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
   onAddComment: () => void
@@ -45,11 +47,7 @@ const CommentInput = ({
         </>
       ) : (
         <Flex alignItems="center">
-          <Avatar
-            mr={2}
-            size={28}
-            src="https://avatars.githubusercontent.com/primer"
-          />
+          <Avatar mr={2} size={28} src={avatarUrl} />
           <TextInput
             backgroundColor="white"
             width="100%"

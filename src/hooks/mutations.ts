@@ -3,13 +3,14 @@ import { FileComments } from '../screens/bins/FilesTab'
 import { queryClient } from './../../pages/_app'
 import { useMutation } from 'react-query'
 import { FileThread } from '../screens/bins/CommentsTab'
+import { Auth } from './useGoogleAuth'
 
 export interface FileReviewInput {
   lineNumber: number
   fileId: string
   comment: {
     content: string
-    author: string
+    author: Auth
   }
 }
 

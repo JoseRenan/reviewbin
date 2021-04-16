@@ -61,7 +61,7 @@ export const BinPage = ({ bin }: { bin: Bin }) => {
           </Flex>
         </Flex>
         <Text fontSize={1} color="text.gray">
-          Criado por <Text fontWeight="bold">{bin.author}</Text> em{' '}
+          Criado por <Text fontWeight="bold">{bin.author.name}</Text> em{' '}
           <Text fontWeight="bold">
             {bin?.timestamp && (
               <>{new Date(bin.timestamp).toLocaleDateString()}</>

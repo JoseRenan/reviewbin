@@ -5,6 +5,7 @@ import { CodeLineWrapper } from '../../components/code-viewer/CodeViewer'
 import CommentInput from '../../components/comment-input'
 import { LineWrapperProps } from '../../components/highlight/Highlight'
 import { useAddFileReviewMutation } from '../../hooks/mutations'
+import { useAuth } from '../../hooks/useGoogleAuth'
 import { BinFile, ReviewComment } from './FilesTab'
 
 export const CommentArea = ({
@@ -18,6 +19,7 @@ export const CommentArea = ({
   binId: string
   comments: ReviewComment[]
 }) => {
+  const { auth: user } = useAuth()
   const [showComment, setShowComment] = useState(false)
   const [comment, setComment] = useState('')
   const addComment = useAddFileReviewMutation(binId)
@@ -34,7 +36,10 @@ export const CommentArea = ({
       fileId,
       comment: {
         content: comment,
-        author: 'anonymous',
+        author: user ?? {
+          name: 'anonymous',
+          photoUrl: 'https://avatars.githubusercontent.com/primer',
+        },
       },
     })
     setComment('')
@@ -71,14 +76,11 @@ export const CommentArea = ({
                 {comments.map((c) => (
                   <Timeline.Item key={`comment--${c.id}`}>
                     <Timeline.Badge>
-                      <Avatar
-                        size={28}
-                        src="https://avatars.githubusercontent.com/primer"
-                      />
+                      <Avatar size={28} src={c.author.photoUrl ?? ''} />
                     </Timeline.Badge>
                     <Timeline.Body>
                       <Text fontWeight="bold" color="gray.8">
-                        {c.author}
+                        {c.author.name}
                       </Text>{' '}
                       {c.timestamp && (
                         <>
@@ -103,6 +105,9 @@ export const CommentArea = ({
               onChange={(e) => setComment(e.target.value)}
               onAddComment={handleSubmit}
               onCancel={() => comments.length === 0 && setShowComment(false)}
+              avatarUrl={
+                user?.photoUrl ?? 'https://avatars.githubusercontent.com/primer'
+              }
             />
           </Box>
         </BorderBox>

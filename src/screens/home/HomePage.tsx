@@ -20,20 +20,29 @@ import {
 import { Bin } from '../bins/FilesTab'
 import { useRouter } from 'next/dist/client/router'
 import { MainLayout } from '../MainLayout'
+import { useAuth } from '../../hooks/useGoogleAuth'
 
-export const Navbar = () => (
-  <Header px={5}>
-    <Header.Link href="/" fontSize={2}>
-      <span>ReviewBin</span>
-    </Header.Link>
-    <Header.Item full ml={3}>
-      Crie, compartilhe e revise código instantaneamente!
-    </Header.Item>
-    <Header.Item mr={0}>
-      <HeaderButton>Entre ou cadastre-se</HeaderButton>
-    </Header.Item>
-  </Header>
-)
+export const Navbar = () => {
+  const { signIn, auth, signOut } = useAuth()
+  return (
+    <Header px={5}>
+      <Header.Link href="/" fontSize={2}>
+        <span>ReviewBin</span>
+      </Header.Link>
+      <Header.Item full ml={3}>
+        Crie, compartilhe e revise código instantaneamente!
+      </Header.Item>
+      <Header.Item mr={0}>
+        <Text mr={4} sx={{ display: 'inline-block' }}>
+          {auth ? `Olá, ${auth.name}!` : ''}
+        </Text>
+        <HeaderButton onClick={auth ? signOut : signIn}>
+          {auth ? 'Sair' : 'Entre ou cadastre-se'}
+        </HeaderButton>
+      </Header.Item>
+    </Header>
+  )
+}
 
 const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
   const [lang, setLang] = useState<Language>(LANGUAGES.text)
@@ -42,6 +51,7 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
   const [code, setCode] = useState('// Cole seu código aqui')
   const [anonymousReview, setAnonymousReview] = useState(true)
   const [loading, setLoading] = useState(false)
+  const { auth: user } = useAuth()
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -54,7 +64,10 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
       body: JSON.stringify({
         name,
         anonymousReview,
-        author: 'anonymous',
+        author: user ?? {
+          name: 'anonymous',
+          photoUrl: 'https://avatars.githubusercontent.com/primer',
+        },
         files: [{ lang, code, filename: 'main' }],
       }),
       headers: {
@@ -70,7 +83,15 @@ const CreateBinForm = ({ onSubmit }: { onSubmit: (data: Bin) => void }) => {
     if (file) {
       formData.append('file', file as Blob)
       formData.append('name', name)
-      formData.append('author', 'anonymous')
+      formData.append('author.name', user?.name ?? 'anonymous')
+      formData.append(
+        'author.photoUrl',
+        user?.photoUrl ?? 'https://avatars.githubusercontent.com/primer'
+      )
+      if (user) {
+        formData.append('author.uid', user.uid ?? '')
+        formData.append('author.email', user.email ?? '')
+      }
     }
     const result = await fetch('/api/bins/upload', {
       method: 'POST',
