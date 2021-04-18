@@ -1,5 +1,6 @@
 import uniqid from 'uniqid'
 import AdmZip from 'adm-zip'
+import FileType from 'file-type'
 import multer from 'multer'
 import admin, { bucket, firestore } from '../firebaseAdmin'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -103,30 +104,39 @@ export const uploadBinZip = async (
   const ref = binsRef.doc()
 
   const promises = zipEntries.map(async (zipEntry) => {
-    if (!zipEntry.isDirectory) {
-      const fileUrl = await uploadBinToStorage(
-        zipEntry.getData().toString('utf8'),
-        `bins/${ref.id}/${zipEntry.entryName}`,
-        'text/plain'
-      ).catch((e) => {
-        console.error(e)
-        res.status(500).json({
-          message: 'An internal error ocurred',
+    if (
+      !zipEntry.isDirectory &&
+      !zipEntry.entryName.endsWith('.class') &&
+      !zipEntry.entryName.split('/').some((folder) => folder.startsWith('.'))
+    ) {
+      const fileBuffer = zipEntry.getData()
+      const fileType = await FileType.fromBuffer(fileBuffer)
+
+      if (!fileType || fileType.mime === 'application/xml') {
+        const fileUrl = await uploadBinToStorage(
+          fileBuffer.toString('utf8'),
+          `bins/${ref.id}/${zipEntry.entryName}`,
+          'plain/text'
+        ).catch((e) => {
+          console.error(e)
+          res.status(500).json({
+            message: 'An internal error ocurred',
+          })
         })
-      })
 
-      const fileExtension = zipEntry.entryName.split('.')
+        const fileExtension = zipEntry.entryName.split('.')
 
-      return {
-        id: uniqid(),
-        name: zipEntry.entryName,
-        url: fileUrl,
-        lang: {
-          name:
-            fileExtension.length > 1
-              ? fileExtension[fileExtension.length - 1]
-              : 'plaintext',
-        },
+        return {
+          id: uniqid(),
+          name: zipEntry.entryName,
+          url: fileUrl,
+          lang: {
+            name:
+              fileExtension.length > 1
+                ? fileExtension[fileExtension.length - 1]
+                : 'plaintext',
+          },
+        }
       }
     }
   })
