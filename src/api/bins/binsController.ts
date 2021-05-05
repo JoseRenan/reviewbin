@@ -8,7 +8,7 @@ import initMiddleware from '../initMiddleware'
 
 export const binsRef = firestore.collection('bins')
 
-const upload = multer()
+const upload = multer({ limits: { fileSize: 26214400 } }) //25 MB (max file size)
 
 const multerAny = initMiddleware(upload.any())
 
