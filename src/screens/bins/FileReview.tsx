@@ -94,7 +94,9 @@ export const CommentArea = ({
                           {new Date(c.timestamp).toLocaleDateString()}
                         </>
                       )}
-                      <Box mt={2}>{c.content}</Box>
+                      <Box mt={2}>
+                        <Text whiteSpace="normal">{c.content}</Text>
+                      </Box>
                     </Timeline.Body>
                   </Timeline.Item>
                 ))}
