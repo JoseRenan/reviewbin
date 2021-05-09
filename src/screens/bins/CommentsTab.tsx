@@ -36,6 +36,7 @@ const CodeComment = ({
         Object.keys(comments).map((lineNumber) => (
           <Box width="100%" key={lineNumber}>
             <CodeViewer
+              fileId={file.id}
               onlyLine={+lineNumber}
               code={file.code ?? ''}
               fileName={file.name}

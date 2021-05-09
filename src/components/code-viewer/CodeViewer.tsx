@@ -87,12 +87,14 @@ export const CodeLineWrapper = ({
 export const CodeViewer = ({
   code,
   fileName,
+  fileId,
   langName,
   onlyLine,
   lineWrapper = (props) => <CodeLineWrapper {...props} />,
 }: {
   onlyLine?: number
   code: string
+  fileId?: string
   fileName: string
   langName: string
   lineWrapper: (props: LineWrapperProps) => JSX.Element
@@ -110,9 +112,17 @@ export const CodeViewer = ({
           borderBottomColor: 'gray.2',
         }}>
         <StyledOcticon color="gray.4" mr={2} icon={FileIcon} />
-        <Text fontFamily="mono" fontSize={12}>
-          {fileName}
-        </Text>
+        {fileId ? (
+          <Link href={`?tab=files#${fileId}`}>
+            <Text fontFamily="mono" fontSize={12}>
+              {fileName}
+            </Text>
+          </Link>
+        ) : (
+          <Text fontFamily="mono" fontSize={12}>
+            {fileName}
+          </Text>
+        )}
       </Flex>
       <Highlight
         onlyLine={onlyLine}

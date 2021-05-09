@@ -79,17 +79,15 @@ export const FilesTab = ({ bin }: { bin: Bin }) => {
         </SideNav>
       </BorderBox>
       <Flex flexDirection="column" sx={{ width: 'calc(100% - 480px)' }}>
-        {isLoading
-          ? 'Carregando...'
-          : bin?.files.map((file) => (
-              <Box key={file.id} mb={4} id={file.id}>
-                <FileReview
-                  binId={bin.id}
-                  file={file}
-                  comments={reviews?.[file.id] ?? []}
-                />
-              </Box>
-            ))}
+        {bin?.files.map((file) => (
+          <Box key={file.id} mb={4} id={file.id}>
+            <FileReview
+              binId={bin.id}
+              file={file}
+              comments={reviews?.[file.id] ?? []}
+            />
+          </Box>
+        ))}
       </Flex>
     </Flex>
   )
